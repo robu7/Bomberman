@@ -1,0 +1,9 @@
+c:\users\robin\documents\visual studio 2012\Projects\BombermanGame\BombermanGame\bin\Debug\BombermanGame.exe.config
+c:\users\robin\documents\visual studio 2012\Projects\BombermanGame\BombermanGame\bin\Debug\BombermanGame.exe
+c:\users\robin\documents\visual studio 2012\Projects\BombermanGame\BombermanGame\bin\Debug\BombermanGame.pdb
+c:\users\robin\documents\visual studio 2012\Projects\BombermanGame\BombermanGame\obj\Debug\BombermanGame.csprojResolveAssemblyReference.cache
+c:\users\robin\documents\visual studio 2012\Projects\BombermanGame\BombermanGame\obj\Debug\BombermanGame.GameForm.resources
+c:\users\robin\documents\visual studio 2012\Projects\BombermanGame\BombermanGame\obj\Debug\BombermanGame.Properties.Resources.resources
+c:\users\robin\documents\visual studio 2012\Projects\BombermanGame\BombermanGame\obj\Debug\BombermanGame.csproj.GenerateResource.Cache
+c:\users\robin\documents\visual studio 2012\Projects\BombermanGame\BombermanGame\obj\Debug\BombermanGame.exe
+c:\users\robin\documents\visual studio 2012\Projects\BombermanGame\BombermanGame\obj\Debug\BombermanGame.pdb
