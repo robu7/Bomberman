@@ -17,55 +17,77 @@ namespace BombermanGame
         Game game;
         InputHandler inputHandler;
         Communicator communicator;
+        HostGameMenuControl hostGameMenu;
+
 
         public GameForm() {
             InitializeComponent();
             Console.WriteLine("Constructor Gameform");
             inputHandler = new InputHandler();
             communicator = new Communicator(this);
-            //communicator = new Communicator();
         }
 
-        private void GameForm_Load(object sender, EventArgs e) {
-
+        public static void ShowErrorDialog(string message) {
+            MessageBox.Show(message, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
+        public void StartGame(Graphics gameGraphics) {
+            game = new Game(gameGraphics, inputHandler, communicator);
+            KeyPreview = true;
+        }
 
         private void JoinButton_Click(object sender, EventArgs e) {
-            foreach (Control control in MainPanel.Controls) {
-                control.Hide();
-            }
-            communicator.connectToHost();
-            JoinGamePanel.Show();
+
+            //communicator.connectToHost();
+            communicator.Connect();
+            hostGameMenu = new HostGameMenuControl();
+            MainPanel.SuspendLayout();
+            MainPanel.Controls.Clear();
+            MainPanel.Controls.Add(hostGameMenu);
+            MainPanel.ResumeLayout(false);
+            //updatePlayerList(1, "zirrobin");
+            communicator.StartListening();
+            hostGameMenu.AddLobbyPlayer(2, "Client");
+
+            /*
+            JoinGameMenuControl joinGameMenu = new JoinGameMenuControl();
+            MainPanel.SuspendLayout();
+            MainPanel.Controls.Clear();
+            MainPanel.Controls.Add(joinGameMenu);
+            MainPanel.ResumeLayout(false);*/
+
         }
 
         private void CreateGameButton_Click(object sender, EventArgs e) {
 
-            foreach (Control control in MainPanel.Controls) {
-                control.Hide();
-            }
-            ServerPanel.Show();
+            hostGameMenu = new HostGameMenuControl();
+            MainPanel.SuspendLayout();
+            MainPanel.Controls.Clear();
+            MainPanel.Controls.Add(hostGameMenu);
+            MainPanel.ResumeLayout(false);
             //updatePlayerList(1, "zirrobin");
-            //communicator.StartListening();
+            communicator.StartListening();
+            hostGameMenu.AddLobbyPlayer(1, "Host");
+            hostGameMenu.EnterHostSettings();
         }
-         
-        private void textBox2_TextChanged(object sender, EventArgs e) {
-
+        
+        public void SendChatMessage(string message) {
+            communicator.SendChatMessage(message);
         }
 
-        private void StartGame_Click(object sender, EventArgs e) {
+        public void PostChatMessage(string message) {
+            hostGameMenu.PostChatMessage(message);
+        }
 
-            foreach (Control control in ServerPanel.Controls) {
-                control.Hide();
-            }
-            //communicator.StopListening();
-            GamePanel.Show();
-            game = new Game(GamePanel.CreateGraphics(), inputHandler, communicator);
-            KeyPreview = true;
-            
+        public void AddPlayerToLobby() {
+
         }
 
 
+
+        /* TODO: implement InputHandler instead
+         * Controller input is passed on to the game class
+         */
         private void GameForm_KeyDown(object sender, KeyEventArgs e) {
             //inputHandler.buttonPressed(e.KeyCode);
             game.handleKeyDownInput(e);
@@ -77,29 +99,9 @@ namespace BombermanGame
         }
 
         private void GameForm_FormClosing(object sender, FormClosingEventArgs e) {
-            game.stopGame();
+            if(game != null)
+                game.stopGame();
         }
 
-        public void updatePlayerList(int i, string username) {
-            switch (i) {
-                case 1:
-                    Player1.AppendText(username);
-                    break;
-                case 2:
-                    Player2.AppendText(username);
-                    break;
-                case 3:
-                    Player3.AppendText(username);
-                    break;
-                case 4:
-                    Player4.AppendText(username);
-                    break;
-
-            }
-        }
-
-      
-
-    
     }
 }

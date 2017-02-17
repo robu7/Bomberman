@@ -50,6 +50,7 @@ namespace BombermanGame
 
 
             //SoundPlayer themeMusic = new SoundPlayer(@"C:\Users\Robin\Pictures\theme.wav");
+            // Ska flyttas
             SoundPlayer themeMusic = new SoundPlayer(Properties.Resources.theme1);
             themeMusic.Play();
             /*

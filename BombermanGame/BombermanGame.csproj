@@ -45,10 +45,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Animation.cs" />
+    <Compile Include="MenuControls\HostGameMenuControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MenuControls\HostGameMenuControl.Designer.cs">
+      <DependentUpon>HostGameMenuControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="InputHandler.cs" />
     <Compile Include="MapObjects\Block.cs" />
     <Compile Include="Bomb.cs" />
-    <Compile Include="Communicator.cs" />
+    <Compile Include="Network\Communicator.cs" />
     <Compile Include="MapObjects\ConstBlock.cs" />
     <Compile Include="Fire.cs" />
     <Compile Include="FireAnimation.cs" />
@@ -64,11 +70,21 @@
     <Compile Include="MapObjects\Ground.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="MapObjects\MapObject.cs" />
+    <Compile Include="Network\Packet.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="MenuControls\JoinGameMenuControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MenuControls\JoinGameMenuControl.Designer.cs">
+      <DependentUpon>JoinGameMenuControl.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="GameForm.resx">
       <DependentUpon>GameForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MenuControls\HostGameMenuControl.resx">
+      <DependentUpon>HostGameMenuControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -80,6 +96,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="MenuControls\JoinGameMenuControl.resx">
+      <DependentUpon>JoinGameMenuControl.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -140,6 +159,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\theme.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\Animations\" />
+    <Folder Include="Resources\MapImages\" />
+    <Folder Include="Resources\Sound\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
