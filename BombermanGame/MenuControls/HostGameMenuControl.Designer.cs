@@ -29,18 +29,17 @@
         private void InitializeComponent()
         {
             this.ServerPanel = new System.Windows.Forms.Panel();
-            this.StartGame = new System.Windows.Forms.Button();
             this.ChatWindow = new System.Windows.Forms.ListBox();
             this.ChatText = new System.Windows.Forms.TextBox();
+            this.StartGame = new System.Windows.Forms.Button();
+            this.PlayerList = new System.Windows.Forms.ListBox();
             this.PlayerLabel = new System.Windows.Forms.Label();
             this.GamePanel = new System.Windows.Forms.Panel();
-            this.PlayerList = new System.Windows.Forms.ListBox();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.IpLabel = new System.Windows.Forms.Label();
-            this.textBox2 = new System.Windows.Forms.TextBox();
             this.PortLabel = new System.Windows.Forms.Label();
+            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.IpLabel = new System.Windows.Forms.Label();
+            this.textBox1 = new System.Windows.Forms.TextBox();
             this.ServerPanel.SuspendLayout();
-            this.GamePanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // ServerPanel
@@ -50,22 +49,16 @@
             this.ServerPanel.Controls.Add(this.StartGame);
             this.ServerPanel.Controls.Add(this.PlayerList);
             this.ServerPanel.Controls.Add(this.PlayerLabel);
+            this.ServerPanel.Controls.Add(this.PortLabel);
+            this.ServerPanel.Controls.Add(this.textBox2);
+            this.ServerPanel.Controls.Add(this.IpLabel);
+            this.ServerPanel.Controls.Add(this.textBox1);
             this.ServerPanel.Controls.Add(this.GamePanel);
             this.ServerPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ServerPanel.Location = new System.Drawing.Point(0, 0);
             this.ServerPanel.Name = "ServerPanel";
             this.ServerPanel.Size = new System.Drawing.Size(1100, 1054);
             this.ServerPanel.TabIndex = 2;
-            // 
-            // StartGame
-            // 
-            this.StartGame.Location = new System.Drawing.Point(621, 261);
-            this.StartGame.Name = "StartGame";
-            this.StartGame.Size = new System.Drawing.Size(75, 23);
-            this.StartGame.TabIndex = 4;
-            this.StartGame.Text = "Start Game";
-            this.StartGame.UseVisualStyleBackColor = true;
-            this.StartGame.Click += new System.EventHandler(this.StartGame_Click);
             // 
             // ChatWindow
             // 
@@ -90,6 +83,27 @@
             this.ChatText.TabIndex = 0;
             this.ChatText.KeyUp += new System.Windows.Forms.KeyEventHandler(this.ChatText_KeyUp);
             // 
+            // StartGame
+            // 
+            this.StartGame.Location = new System.Drawing.Point(621, 261);
+            this.StartGame.Name = "StartGame";
+            this.StartGame.Size = new System.Drawing.Size(75, 23);
+            this.StartGame.TabIndex = 4;
+            this.StartGame.Text = "Start Game";
+            this.StartGame.UseVisualStyleBackColor = true;
+            this.StartGame.Click += new System.EventHandler(this.StartGame_Click);
+            // 
+            // PlayerList
+            // 
+            this.PlayerList.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.PlayerList.FormattingEnabled = true;
+            this.PlayerList.ItemHeight = 20;
+            this.PlayerList.Location = new System.Drawing.Point(347, 180);
+            this.PlayerList.Name = "PlayerList";
+            this.PlayerList.SelectionMode = System.Windows.Forms.SelectionMode.None;
+            this.PlayerList.Size = new System.Drawing.Size(120, 104);
+            this.PlayerList.TabIndex = 0;
+            // 
             // PlayerLabel
             // 
             this.PlayerLabel.AutoSize = true;
@@ -106,50 +120,10 @@
             this.GamePanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.GamePanel.Controls.Add(this.PortLabel);
-            this.GamePanel.Controls.Add(this.textBox2);
-            this.GamePanel.Controls.Add(this.IpLabel);
-            this.GamePanel.Controls.Add(this.textBox1);
             this.GamePanel.Location = new System.Drawing.Point(0, 0);
             this.GamePanel.Name = "GamePanel";
             this.GamePanel.Size = new System.Drawing.Size(1100, 1054);
             this.GamePanel.TabIndex = 3;
-            // 
-            // PlayerList
-            // 
-            this.PlayerList.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.PlayerList.FormattingEnabled = true;
-            this.PlayerList.ItemHeight = 20;
-            this.PlayerList.Location = new System.Drawing.Point(347, 180);
-            this.PlayerList.Name = "PlayerList";
-            this.PlayerList.SelectionMode = System.Windows.Forms.SelectionMode.None;
-            this.PlayerList.Size = new System.Drawing.Size(120, 104);
-            this.PlayerList.TabIndex = 0;
-            // 
-            // textBox1
-            // 
-            this.textBox1.Enabled = false;
-            this.textBox1.Location = new System.Drawing.Point(347, 42);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(100, 20);
-            this.textBox1.TabIndex = 0;
-            // 
-            // IpLabel
-            // 
-            this.IpLabel.AutoSize = true;
-            this.IpLabel.Location = new System.Drawing.Point(347, 23);
-            this.IpLabel.Name = "IpLabel";
-            this.IpLabel.Size = new System.Drawing.Size(51, 13);
-            this.IpLabel.TabIndex = 1;
-            this.IpLabel.Text = "Server IP";
-            // 
-            // textBox2
-            // 
-            this.textBox2.Enabled = false;
-            this.textBox2.Location = new System.Drawing.Point(347, 94);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(100, 20);
-            this.textBox2.TabIndex = 2;
             // 
             // PortLabel
             // 
@@ -160,6 +134,31 @@
             this.PortLabel.TabIndex = 3;
             this.PortLabel.Text = "Server port";
             // 
+            // textBox2
+            // 
+            this.textBox2.Enabled = false;
+            this.textBox2.Location = new System.Drawing.Point(347, 94);
+            this.textBox2.Name = "textBox2";
+            this.textBox2.Size = new System.Drawing.Size(100, 20);
+            this.textBox2.TabIndex = 2;
+            // 
+            // IpLabel
+            // 
+            this.IpLabel.AutoSize = true;
+            this.IpLabel.Location = new System.Drawing.Point(347, 23);
+            this.IpLabel.Name = "IpLabel";
+            this.IpLabel.Size = new System.Drawing.Size(51, 13);
+            this.IpLabel.TabIndex = 1;
+            this.IpLabel.Text = "Server IP";
+            // 
+            // textBox1
+            // 
+            this.textBox1.Enabled = false;
+            this.textBox1.Location = new System.Drawing.Point(347, 42);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(100, 20);
+            this.textBox1.TabIndex = 0;
+            // 
             // HostGameMenuControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -169,8 +168,6 @@
             this.Size = new System.Drawing.Size(1100, 1054);
             this.ServerPanel.ResumeLayout(false);
             this.ServerPanel.PerformLayout();
-            this.GamePanel.ResumeLayout(false);
-            this.GamePanel.PerformLayout();
             this.ResumeLayout(false);
 
         }

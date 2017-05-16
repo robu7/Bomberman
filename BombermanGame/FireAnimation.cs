@@ -10,126 +10,40 @@ namespace BombermanGame
 {
     class FireAnimation : Animation
     {
+ 
+        private const double timeBetweenFrames = 0.2;
+     
+        public static FireAnimation Left { get; } = new FireAnimation(Properties.Resources.ExplosionLeft);
+        public static FireAnimation Right { get; } = new FireAnimation(Properties.Resources.ExplosionRight);
+        public static FireAnimation Up { get; } = new FireAnimation(Properties.Resources.ExplosionUp);
+        public static FireAnimation Down { get; } = new FireAnimation(Properties.Resources.ExplosionDown);
+        public static FireAnimation Horizontal { get; } = new FireAnimation(Properties.Resources.ExplosionHorizontal);
+        public static FireAnimation Vertical { get; } = new FireAnimation(Properties.Resources.ExplosionVertical);
+        public static FireAnimation Center { get; } = new FireAnimation(Properties.Resources.ExplosionCentre);
 
-        private List<Bitmap> up;
-        private List<Bitmap> down;
-        private List<Bitmap> left;
-        private List<Bitmap> right;
-        private List<Bitmap> center;
-        private List<Bitmap> vertical;
-        private List<Bitmap> horizontel;
-
-
-        public FireAnimation(Bitmap original) {
-            center = new List<Bitmap>();
-            up = new List<Bitmap>();
-            down = new List<Bitmap>();
-            left = new List<Bitmap>();
-            right = new List<Bitmap>();
-            vertical = new List<Bitmap>();
-            horizontel = new List<Bitmap>();
-
+        private FireAnimation(Bitmap original){
             currentFrame = 0;
+            interval = timeBetweenFrames;
             Bitmap sprite;
             Rectangle srcRect;
 
-            int i = 0;
-            for (; i < 7; ++i) {
+            for (int i = 0; i < 7; ++i) {
                 srcRect = new Rectangle(i * 32, 0, 32, 32);
                 sprite = (Bitmap)original.Clone(srcRect, original.PixelFormat);
-                center.Add(new Bitmap(sprite, Game.boxSize));
+                spriteSequence.Add(new Bitmap(sprite, Game.boxSize));
+                sprite.Dispose();
             }
-
-            original = Properties.Resources.ExplosionUp;
-            for (i = 0; i < 7; ++i) {
-                srcRect = new Rectangle(i * 32, 0, 32, 32);
-                sprite = (Bitmap)original.Clone(srcRect, original.PixelFormat);
-                up.Add(new Bitmap(sprite, Game.boxSize));
-            }
-
-            original = Properties.Resources.ExplosionDown;
-            for (i = 0; i < 7; ++i) {
-                srcRect = new Rectangle(i * 32, 0, 32, 32);
-                sprite = (Bitmap)original.Clone(srcRect, original.PixelFormat);
-                down.Add(new Bitmap(sprite, Game.boxSize));
-            }
-
-            original = Properties.Resources.ExplosionLeft;
-            for (i = 0; i < 7; ++i) {
-                srcRect = new Rectangle(i * 32, 0, 32, 32);
-                sprite = (Bitmap)original.Clone(srcRect, original.PixelFormat);
-                left.Add(new Bitmap(sprite, Game.boxSize));
-            }
-
-            original = Properties.Resources.ExplosionRight;
-            for (i = 0; i < 7; ++i) {
-                srcRect = new Rectangle(i * 32, 0, 32, 32);
-                sprite = (Bitmap)original.Clone(srcRect, original.PixelFormat);
-                right.Add(new Bitmap(sprite, Game.boxSize));
-            }
-
-            original = Properties.Resources.ExplosionVertical;
-            for (i = 0; i < 7; ++i) {
-                srcRect = new Rectangle(i * 32, 0, 32, 32);
-                sprite = (Bitmap)original.Clone(srcRect, original.PixelFormat);
-                vertical.Add(new Bitmap(sprite, Game.boxSize));
-            }
-
-            original = Properties.Resources.ExplosionHorizontal;
-            for (i = 0; i < 7; ++i) {
-                srcRect = new Rectangle(i * 32, 0, 32, 32);
-                sprite = (Bitmap)original.Clone(srcRect, original.PixelFormat);
-                horizontel.Add(new Bitmap(sprite, Game.boxSize));
-            }
-
-
-            spriteSequence = up;
-            interval = new Timer(200);
-            interval.AutoReset = true;
-            interval.Elapsed += delegate { nextFrame(); };
         }
 
-        // TODO, change this
-        public override void start(Game.Direction direction) { }
+        public override void start(Game.Direction direction, double animationStartTime) { this.animationStartTime = animationStartTime; }
 
-        public void startAnimation(FireType direction) {
-
-            switch (direction) {
-                case FireType.Center:
-                    spriteSequence = center;
-                    break;
-                case FireType.Horizontal:
-                    spriteSequence = horizontel;
-                    break;
-                case FireType.Vertical:
-                    spriteSequence = vertical;
-                    break;
-                case FireType.Up:
-                    spriteSequence = up;
-                    break;
-                case FireType.Down:
-                    spriteSequence = down;
-                    break;
-                case FireType.Left:
-                    spriteSequence = left;
-                    break;
-                case FireType.Right:
-                    spriteSequence = right;
-                    break;
-            }
-            interval.Start();
-        }
         public override void stop() {
             currentFrame = 0;
-            interval.Stop();
         }
 
-        private void nextFrame() {
-            if (currentFrame == 6)
-                currentFrame = 0;
-            else
-                ++currentFrame;
+        public override void update(double tick, double totalTime) {
+            double elapsed = totalTime - this.animationStartTime;
+            this.currentFrame = Math.Min((int)Math.Floor(elapsed / interval),6);
         }
-
     }
 }

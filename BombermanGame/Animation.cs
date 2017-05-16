@@ -9,18 +9,21 @@ using System.Timers;
 namespace BombermanGame
 {
 
-    abstract class Animation
+    abstract class Animation : IUpdateable
     {
-        protected List<Bitmap> spriteSequence;
-        protected Timer interval;
+        protected List<Bitmap> spriteSequence = new List<Bitmap>();
+        protected double interval;
         protected int currentFrame;
+        protected double totalTicks;
+        protected double animationStartTime;
 
-        public Animation() { }
-
-        public abstract void start(Game.Direction direction);
+        public abstract void start(Game.Direction direction, double animationStartTime);
         public abstract void stop();
 
+
         public Bitmap getFrame() { return spriteSequence[currentFrame]; }
+
+        public abstract void update(double tick, double totalTime);
     }
 
 
@@ -29,11 +32,14 @@ namespace BombermanGame
 
         //private List<Bitmap> spriteSequence;
 
-        private List<Bitmap> up;
-        private List<Bitmap> down;
-        private List<Bitmap> left;
-        private List<Bitmap> right;
-        private List<Bitmap> death;
+        static private List<Bitmap> up;
+        static private List<Bitmap> down;
+        static private List<Bitmap> left;
+        static private List<Bitmap> right;
+        static private List<Bitmap> death;
+        private const double timeBetweenFrames = 0.2;
+        private bool active;
+        //private bool deathInitilized;
         //private Timer interval;
         //private int currentFrame;
 
@@ -44,6 +50,8 @@ namespace BombermanGame
             right = new List<Bitmap>();
             death = new List<Bitmap>();
             currentFrame = 0;
+            active = false;
+            //deathInitilized = false;
             Bitmap sprite;
             Rectangle srcRect;
 
@@ -53,6 +61,7 @@ namespace BombermanGame
                 srcRect = new Rectangle(i * 48, 0, 48, 48);
                 sprite = (Bitmap)original.Clone(srcRect, original.PixelFormat);
                 down.Add(new Bitmap(sprite, Game.boxSize));
+                sprite.Dispose();
             }
 
             // Init right
@@ -60,6 +69,7 @@ namespace BombermanGame
                 srcRect = new Rectangle(i * 48, 0, 48, 48);
                 sprite = (Bitmap)original.Clone(srcRect, original.PixelFormat);
                 right.Add(new Bitmap(sprite, Game.boxSize));
+                sprite.Dispose();
             }
 
             // Init left
@@ -67,6 +77,7 @@ namespace BombermanGame
                 srcRect = new Rectangle(i * 48, 0, 48, 48);
                 sprite = (Bitmap)original.Clone(srcRect, original.PixelFormat);
                 left.Add(new Bitmap(sprite, Game.boxSize));
+                sprite.Dispose();
             }
 
             // Init up
@@ -74,6 +85,7 @@ namespace BombermanGame
                 srcRect = new Rectangle(i * 48, 0, 48, 48);
                 sprite = (Bitmap)original.Clone(srcRect, original.PixelFormat);
                 up.Add(new Bitmap(sprite, Game.boxSize));
+                sprite.Dispose();
             }
 
             // Init death
@@ -81,26 +93,23 @@ namespace BombermanGame
                 srcRect = new Rectangle(i * 48, 0, 48, 48);
                 sprite = (Bitmap)original.Clone(srcRect, original.PixelFormat);
                 death.Add(new Bitmap(sprite, Game.boxSize));
+                sprite.Dispose();
             }
 
             spriteSequence = down;
-            interval = new Timer(150);
-            interval.AutoReset = true;
-            interval.Elapsed += delegate { nextFrame(); };
-
         }
 
         public void startDeathAnimation() {
             spriteSequence = death;
             //interval.Close();
-            interval = new Timer(150);
-            interval.AutoReset = true;
-            interval.Elapsed += delegate { deathAnimation(); };
+            interval = 0.15;
             currentFrame = 0;
-            interval.Start();
+            active = true;
         }
 
-        public override void start(Game.Direction direction) {
+        public override void start(Game.Direction direction, double startTime) {
+
+            animationStartTime = startTime;
 
             switch (direction) {
                 case Game.Direction.Down:
@@ -116,12 +125,21 @@ namespace BombermanGame
                     spriteSequence = left;
                     break;
             }
-
-            interval.Start();
+            active = true;
         }
         public override void stop() {
             currentFrame = 0;
-            interval.Stop();
+            active = false;
+        }
+
+        public override void update(double tick, double totalTime) {
+            if (active) {
+                interval -= tick;
+                if(interval <= 0) {
+                    interval = timeBetweenFrames;
+                    nextFrame();
+                }
+            }
         }
 
         private void nextFrame() {

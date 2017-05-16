@@ -11,7 +11,7 @@ using System.Net;
 
 namespace BombermanGame
 {
-    public partial class HostGameMenuControl : UserControl
+    public partial class HostGameMenuControl : UserControl, NetworkReciever
     {
         public HostGameMenuControl()
         {
@@ -39,18 +39,16 @@ namespace BombermanGame
 
         }
 
-        public void PostChatMessage(string message) {
+        public void PostChatMessage(string message, string name) {
             Invoke((Action)delegate {
-                ChatWindow.Items.Add("Other: " + message);
+                ChatWindow.Items.Add(name +": " + message);
             });
         }
 
-        public void EnterNewPlayer() {
-
-        }
-
-        private void Lobby_Enter(object sender, EventArgs e) {
-            
+        public void PostChatMessage(ChatMessage message) {
+            Invoke((Action)delegate {
+                ChatWindow.Items.Add(message.Name + ": " + message.Message);
+            });
         }
 
         public void AddLobbyPlayer(int playerNum, string name) {
@@ -63,5 +61,18 @@ namespace BombermanGame
             //var ip = Dns.GetHostEntry(Dns.GetHostName()).AddressList.Where(o => o.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork).First().ToStr‌​ing();
             //Console.WriteLine("My IP: " + ip);
         }
+
+        public void HandleCommand<T>(T command) {
+            Console.WriteLine(typeof(T).Name);
+            switch(typeof(T).Name) {
+                case "ChatMessage":
+                    PostChatMessage(command as ChatMessage);
+                    break;
+            }
+        }
+        public void ReadySignal(int peerID) {
+
+        }
+
     }
 }

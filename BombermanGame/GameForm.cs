@@ -7,12 +7,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Windows.Input;
 using System.Runtime.InteropServices;
 
 namespace BombermanGame
 {
-    public partial class GameForm : Form
+    partial class GameForm : Form
     {
         Game game;
         InputHandler inputHandler;
@@ -47,7 +46,10 @@ namespace BombermanGame
             MainPanel.ResumeLayout(false);
             //updatePlayerList(1, "zirrobin");
             communicator.StartListening();
+            communicator.ActiveControl = hostGameMenu;
             hostGameMenu.AddLobbyPlayer(2, "Client");
+
+
 
             /*
             JoinGameMenuControl joinGameMenu = new JoinGameMenuControl();
@@ -66,6 +68,8 @@ namespace BombermanGame
             MainPanel.Controls.Add(hostGameMenu);
             MainPanel.ResumeLayout(false);
             //updatePlayerList(1, "zirrobin");
+            communicator.IsHost = true;
+            communicator.ActiveControl = hostGameMenu;
             communicator.StartListening();
             hostGameMenu.AddLobbyPlayer(1, "Host");
             hostGameMenu.EnterHostSettings();
@@ -75,14 +79,18 @@ namespace BombermanGame
             communicator.SendChatMessage(message);
         }
 
-        public void PostChatMessage(string message) {
-            hostGameMenu.PostChatMessage(message);
+        public void PostChatMessage(string message, string name) {
+            hostGameMenu.PostChatMessage(message, name);
         }
 
-        public void AddPlayerToLobby() {
-
+        // Should be like this, TODO
+        public void AddPlayerToLobby(PlayerInfo newPlayer) {
+            hostGameMenu.AddLobbyPlayer(newPlayer.PeerID, newPlayer.Name);
         }
 
+        public void AddPlayerToLobby(int playerID, string name) {
+            hostGameMenu.AddLobbyPlayer(playerID, name);
+        }
 
 
         /* TODO: implement InputHandler instead

@@ -9,14 +9,24 @@ using System.Drawing;
 
 namespace BombermanGame
 {
+    interface IUpdateable
+    {
+        void update(double tick, double totalTime);
+    }
+
+    interface ITimer : IUpdateable
+    {
+        bool Finished { get; }
+    }
+
     partial class Game
     {
         /*
         * ---Time variables to ensure even game flow---
         */
-        private double gameTime;
-        private double elapsedTime;
-        private double _lastTime = 0;
+        private double newTime;
+        private double frameTime;
+        private double currentTime = 0;
 
         /*
          * ---Size values to game--- 

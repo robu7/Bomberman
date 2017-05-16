@@ -29,7 +29,7 @@ namespace BombermanGame
             hitbox = new RectangleF(position, new SizeF(Game.tileSize, Game.tileSize));
         }
 
-        
+
         /*
          * Getters
          */

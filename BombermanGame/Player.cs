@@ -22,23 +22,34 @@ namespace BombermanGame
             spriteAnimation = new PlayerAnimation(Properties.Resources.blue);
             draw = true;
             alive = true;
-            bombCap = 2;
+            bombCap = 4;
             range = 2;
         }
 
-        public void startAnimating(Game.Direction direction) { spriteAnimation.start(direction); }
+
+        public int getBombCap() { return bombCap; }
+        public int getBombRange() { return range; }
+        public void incBombCap() { ++bombCap; }
+        public void decBombCap() { --bombCap; }
+
+        public bool isAlive() { return alive; }
+        public bool shouldDraw() { return draw; }
+        private void stopDrawing() { draw = false; }
+
+        public void startAnimating(Game.Direction direction) { spriteAnimation.start(direction, 0); }
         public void stopAnimating() { spriteAnimation.stop(); }
 
         public override Bitmap getSprite() { return spriteAnimation.getFrame(); }
 
-        public override void update(double elapsedTime) {
+        public override void update(double tick) {
             mapPosition.X = (int)Math.Round(position.X / Game.tileSize);
             mapPosition.Y = (int)Math.Round(position.Y / Game.tileSize);
 
-
-            position.X += velocity.X * (float)elapsedTime;
-            position.Y += velocity.Y * (float)elapsedTime;
+            position.X += velocity.X * (float)tick;
+            position.Y += velocity.Y * (float)tick;
             hitbox.Location = position;
+
+            spriteAnimation.update(tick, 0);
             //hitbox = new RectangleF(position, new SizeF(Game.tileSize, Game.tileSize));
             //direction = Game.Direction.None;
         }
@@ -74,15 +85,38 @@ namespace BombermanGame
                     break;
             }
         }
+      
+        public void updateMovement(Game.Direction updatedDirection) {
+            switch (updatedDirection) {
+                case Game.Direction.Up:
+                    setVelocity(new PointF(0, -225));
+                    startAnimating(Game.Direction.Up);
+                    setDirection(Game.Direction.Up);
+                    break;
+                case Game.Direction.Down:
+                    setVelocity(new PointF(0, 225));
+                    startAnimating(Game.Direction.Down);
+                    setDirection(Game.Direction.Down);
+                    break;
+                case Game.Direction.Left:
+                    setVelocity(new PointF(-225, 0));
+                    startAnimating(Game.Direction.Left);
+                    setDirection(Game.Direction.Left);
+                    break;
+                case Game.Direction.Right:
+                    setVelocity(new PointF(225, 0));
+                    startAnimating(Game.Direction.Right);
+                    setDirection(Game.Direction.Right);
+                    break;
+                case Game.Direction.None:
+                    setVelocity(new PointF(0, 0));
+                    stopAnimating();
+                    setDirection(Game.Direction.None);
+                    break;
+            }
+            
+        }
 
-
-        public int getBombCap() { return bombCap; }
-        public int getBombRange() { return range; }
-        public void incBombCap() { ++bombCap; }
-        public void decBombCap() { --bombCap; }
-
-        public bool isAlive() { return alive; }
-        public bool shouldDraw() { return draw; }
 
         public void destroy() {
             alive = false;
@@ -93,8 +127,6 @@ namespace BombermanGame
             deathTimer.Elapsed += delegate { stopDrawing(); };
             deathTimer.Start();
         }
-
-        private void stopDrawing() { draw = false; }
 
     }
 }

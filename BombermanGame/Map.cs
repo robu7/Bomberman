@@ -7,13 +7,23 @@ using System.Drawing;
 
 namespace BombermanGame
 {
+    interface ITimedMapObject : IUpdateable
+    {
+        bool Finished { get; }
+        Point MapPos { get; }
+    }
+
     class Map
     {
         public Stack<MapObject>[,] mapObjects = new Stack<MapObject>[11, 11];
         private MapObject[,] map = new MapObject[11, 11];
+        private List<ITimedMapObject> itemsToUpdate;
+        //private Ground ground;
 
         public Map(int numPlayers = 1) {
             initMap();
+            itemsToUpdate = new List<ITimedMapObject>();
+            //ground = new Ground(new PointF(0,0));
         }
 
         public MapObject[,] getMap() { return map; }
@@ -64,27 +74,33 @@ namespace BombermanGame
 
         public void addObject(MapObject newObj, Point pos) {
             Console.WriteLine("{0} Object added at: {1}", newObj, pos);
-            lock (map) {
-                map[pos.X, pos.Y] = (newObj);
-            }
+            map[pos.X, pos.Y] = (newObj);
         }
 
         public void addFire(Fire fire, Point pos) {
-            Console.WriteLine("Fire added at: {0}", pos);
+            //Console.WriteLine("Fire added at: {0}", pos);
             if (map[pos.X, pos.Y] is Fire) {
-                Fire fireAtPos = (Fire)map[pos.X, pos.Y];
-                fireAtPos.TTL.Close();
+                itemsToUpdate.RemoveAll(item => item.MapPos == pos);
             }
-            lock (map) {
-                map[pos.X, pos.Y] = fire;
-            }
-            fire.TTL.Elapsed += delegate { destroyObject(pos); };
+            map[pos.X, pos.Y] = fire;
+            itemsToUpdate.Add(fire);
         }
 
         public void destroyObject(Point pos) {
-            lock (map) {
-                map[pos.X, pos.Y] = new Ground(new PointF(pos.X * Game.tileSize, pos.Y * Game.tileSize));
-            }
+            map[pos.X, pos.Y] = new Ground(new PointF(pos.X * Game.tileSize, pos.Y * Game.tileSize));
         }
+
+        public void updateAll(double tick, double totalTime) {
+            foreach (var item in itemsToUpdate) {
+                item.update(tick, totalTime);
+                if(item is ITimedMapObject) {
+                    if(item.Finished) {
+                        destroyObject(item.MapPos);
+                    }
+                }
+            }
+            itemsToUpdate.RemoveAll(item => item.Finished);
+        }
+
     }
 }

@@ -10,7 +10,7 @@ namespace BombermanGame
     class Ground : MapObject
     {
 
-        private Bitmap sprite;
+        static private Bitmap sprite;
 
         public Ground(PointF position)
             : base(position, Properties.Resources.Ground) {
