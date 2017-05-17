@@ -11,7 +11,7 @@ namespace BombermanGame
 
     abstract class Animation : IUpdateable
     {
-        protected List<Bitmap> spriteSequence = new List<Bitmap>();
+        protected IReadOnlyList<Bitmap> spriteSequence = new List<Bitmap>();
         protected double interval;
         protected int currentFrame;
         protected double totalTicks;
