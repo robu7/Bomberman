@@ -20,7 +20,6 @@ namespace BombermanGame
         private Map map;                    // ---Current map ---
 
         private Thread GameThread;          // ---Game loop thread---
-        //private static long explodingBombCount = 0;
 
         private List<MoveableObject> objectsInMotion;   // ---List of objects currently moving
 
@@ -310,8 +309,6 @@ namespace BombermanGame
         private void bombExplosion(Bomb bomb, double totalTime) {
             //Console.WriteLine("Bomb exploded at: {0}", bomb.getMapPosition());
 
-            double newTime = Environment.TickCount / 1000.0;
-
             Point currentMapPos = bomb.getMapPosition();
             map.destroyObject(currentMapPos);
             bomb.getOwner().incBombCap();
@@ -325,9 +322,6 @@ namespace BombermanGame
             explodeInDirection(bomb, rightModifier, 0, FireType.Right, totalTime);
             
             bomb.destroy();
-
-            double test = Environment.TickCount / 1000.0;
-            Console.WriteLine(test- newTime);
         }
 
         /*

@@ -9,12 +9,9 @@ namespace BombermanGame
 {
     class ConstBlock : MapObject
     {
-        private Bitmap sprite;
+        private static Bitmap sprite = new Bitmap(Properties.Resources.constblock, Game.boxSize);
 
-         public ConstBlock(PointF position) : base(position, Properties.Resources.constblock) {
-
-             sprite = new Bitmap(Properties.Resources.constblock, Game.boxSize);
-        }
+         public ConstBlock(PointF position) : base(position) {}
 
 
          public override Bitmap getSprite() { return sprite; }

@@ -14,15 +14,13 @@ namespace BombermanGame
     //    protected Bitmap sprite;
         protected RectangleF hitbox;
 
-        protected MapObject(PointF _position, Bitmap _sprite) {
-            //sprite = new Bitmap(_sprite, Game.boxSize);
+        protected MapObject(PointF _position) {
             position = _position;
             mapPosition.X = (int)Math.Round(position.X / Game.tileSize);
             mapPosition.Y = (int)Math.Round(position.Y / Game.tileSize);
             hitbox = new RectangleF(position, new SizeF(Game.tileSize, Game.tileSize));
         }
-        protected MapObject(Point _mapPosition, Bitmap _sprite) {
-            //sprite = new Bitmap(_sprite, Game.boxSize);
+        protected MapObject(Point _mapPosition) {
             mapPosition = _mapPosition;
             position.X = _mapPosition.X * Game.tileSize;
             position.Y = _mapPosition.Y * Game.tileSize;
@@ -46,7 +44,7 @@ namespace BombermanGame
         //protected Point mapPosition; 
         protected Game.Direction direction;
 
-        protected MoveableObject(PointF _position, Bitmap _sprite) : base(_position, _sprite){
+        protected MoveableObject(PointF position) : base(position){
             direction = Game.Direction.None;
          
         }

@@ -10,13 +10,10 @@ namespace BombermanGame
     class Ground : MapObject
     {
 
-        static private Bitmap sprite;
+        static private Bitmap sprite = new Bitmap(Properties.Resources.Ground, Game.boxSize);
 
         public Ground(PointF position)
-            : base(position, Properties.Resources.Ground) {
-
-                sprite = new Bitmap(Properties.Resources.Ground, Game.boxSize);
-        }
+            : base(position) {}
 
 
         public override Bitmap getSprite() { return sprite; }

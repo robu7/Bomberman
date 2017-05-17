@@ -9,11 +9,9 @@ namespace BombermanGame
 {
     class Block : MapObject, IDestroyable
     {
-        static private Bitmap sprite;
+        static private Bitmap sprite = new Bitmap(Properties.Resources.block, Game.boxSize);
 
-        public Block(PointF position) : base(position, Properties.Resources.block) {
-
-            sprite = new Bitmap(Properties.Resources.block, Game.boxSize);
+        public Block(PointF position) : base(position) {
         }
 
 

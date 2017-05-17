@@ -12,26 +12,25 @@ namespace BombermanGame
     {
 
         private Player owner;
-        static private Bitmap sprite;
+        static private Bitmap sprite = new Bitmap(Properties.Resources.bomb, Game.boxSize);
         private double timeToLive;
         private int range;
         private bool hasExploded;
         public bool HasExploded { get { return hasExploded; } }
 
         public Bomb(PointF position, Player _owner)
-            : base(position, Properties.Resources.bomb) {
+            : base(position) {
             owner = _owner;
             initBomb();
         }
 
         public Bomb(Point position, Player _owner)
-             : base(position, Properties.Resources.bomb) {
+             : base(position) {
             owner = _owner;
             initBomb();
         }
 
         private void initBomb() {
-            sprite = new Bitmap(Properties.Resources.bomb, Game.boxSize);
             range = owner.getBombRange();
             timeToLive = 2.5;// set time to 2.5 seconds
             hasExploded = false;
