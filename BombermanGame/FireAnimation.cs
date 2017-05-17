@@ -2,21 +2,25 @@
 using System.Collections.Generic;
 using System.Drawing;
 
-namespace BombermanGame
-{
-    class FireAnimation : Animation
-    {
- 
+namespace BombermanGame {
+    class FireAnimation : Animation {
+
         private const double timeBetweenFrames = 0.2;
 
-        private static readonly IReadOnlyList<Bitmap> leftEdgeSprites = buildSpriteSequence(Properties.Resources.ExplosionLeft);
-        private static readonly IReadOnlyList<Bitmap> rightEdgeSprites = buildSpriteSequence(Properties.Resources.ExplosionRight);
-        private static readonly IReadOnlyList<Bitmap> topEdgeSprites = buildSpriteSequence(Properties.Resources.ExplosionUp);
-        private static readonly IReadOnlyList<Bitmap> bottomEdgeSprites = buildSpriteSequence(Properties.Resources.ExplosionDown);
-        private static readonly IReadOnlyList<Bitmap> horizontalSectionSprites = buildSpriteSequence(Properties.Resources.ExplosionHorizontal);
-        private static readonly IReadOnlyList<Bitmap> verticalSectionSprites = buildSpriteSequence(Properties.Resources.ExplosionVertical);
-        private static readonly IReadOnlyList<Bitmap> centerSprites = buildSpriteSequence(Properties.Resources.ExplosionCentre);
+        // Used to only extract sprites from the original resources once
+        private static readonly IReadOnlyDictionary<FireType, IReadOnlyList<Bitmap>> sprites = new Dictionary<FireType, IReadOnlyList<Bitmap>> {
+            { FireType.Left, buildSpriteSequence(Properties.Resources.ExplosionLeft) },
+            { FireType.Right, buildSpriteSequence(Properties.Resources.ExplosionRight) },
+            { FireType.Up, buildSpriteSequence(Properties.Resources.ExplosionUp) },
+            { FireType.Down, buildSpriteSequence(Properties.Resources.ExplosionDown) },
+            { FireType.Horizontal, buildSpriteSequence(Properties.Resources.ExplosionHorizontal) },
+            { FireType.Vertical, buildSpriteSequence(Properties.Resources.ExplosionVertical) },
+            { FireType.Center, buildSpriteSequence(Properties.Resources.ExplosionCentre) },
+        };
 
+        /// <summary>
+        /// Crops out sprites from an image containing the whole animation sequence
+        /// </summary>
         private static List<Bitmap> buildSpriteSequence(Bitmap original) {
             Bitmap sprite;
             Rectangle srcRect;
@@ -30,23 +34,22 @@ namespace BombermanGame
             return sequence;
         }
 
+        /// <summary>
+        /// Returns the appropriate animation for the specified part of an explosion fire
+        /// </summary>
+        public static FireAnimation getFireAnimation(FireType direction) {
+            // Get pre-generated sprites
+            IReadOnlyList<Bitmap> spriteSequence;
+            if (!sprites.TryGetValue(direction, out spriteSequence)) {
+                throw new Exception("Unknown Fire Type: " + direction);
+            }
+            return new FireAnimation(spriteSequence);
+        }
+
         private FireAnimation(IReadOnlyList<Bitmap> spriteSequence) {
             currentFrame = 0;
             interval = timeBetweenFrames;
             this.spriteSequence = spriteSequence;
-        }
-
-        public static FireAnimation getFireAnimation(FireType direction) {
-            switch (direction) {
-                case FireType.Center: return new FireAnimation(centerSprites);
-                case FireType.Up: return new FireAnimation(topEdgeSprites);
-                case FireType.Down: return new FireAnimation(bottomEdgeSprites);
-                case FireType.Right: return new FireAnimation(rightEdgeSprites);
-                case FireType.Left: return new FireAnimation(leftEdgeSprites);
-                case FireType.Horizontal: return new FireAnimation(horizontalSectionSprites);
-                case FireType.Vertical: return new FireAnimation(verticalSectionSprites);
-            }
-            throw new Exception("Unknown Fire Type: " + direction);
         }
 
         public override void start(Game.Direction direction, double animationStartTime) { this.animationStartTime = animationStartTime; }
@@ -57,7 +60,7 @@ namespace BombermanGame
 
         public override void update(double tick, double totalTime) {
             double elapsed = totalTime - this.animationStartTime;
-            this.currentFrame = Math.Min((int)Math.Floor(elapsed / interval),6);
+            this.currentFrame = Math.Min((int)Math.Floor(elapsed / interval), 6);
         }
     }
 }
