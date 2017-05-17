@@ -22,33 +22,17 @@ namespace BombermanGame
         public Fire(PointF position, FireType direction, double startTime)
             : base(position, Properties.Resources.fire) {
 
-            spriteAnimation = getFireAnimation(direction);
+            spriteAnimation = FireAnimation.getFireAnimation(direction);
             spriteAnimation.start(0, startTime);
             timeToLive = 1;
         }
 
         public Fire(Point position, FireType direction, double startTime)
          : base(position, Properties.Resources.fire) {
-            spriteAnimation = getFireAnimation(direction);
+            spriteAnimation = FireAnimation.getFireAnimation(direction);
             spriteAnimation.start(0, startTime);
             timeToLive = 1;
         }
-
-        private static FireAnimation getFireAnimation(FireType direction) {
-
-            switch (direction) {
-                case FireType.Center: return FireAnimation.Center;
-                case FireType.Up: return FireAnimation.Up;
-                case FireType.Down: return FireAnimation.Down;
-                case FireType.Right: return FireAnimation.Right;
-                case FireType.Left: return FireAnimation.Left;
-                case FireType.Horizontal: return FireAnimation.Horizontal;
-                case FireType.Vertical: return FireAnimation.Vertical;
-            }
-            throw new Exception("Unknown Fire Type: " +direction);
-        }
-
-     
 
 
         //public override Bitmap getSprite() { return spriteAnimation.getFrame(); }
