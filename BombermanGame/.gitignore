@@ -1,8 +1,0 @@
-../.vs/*
-bin/Debug/*
-bin/Debug/BombermanGame.pdb
-obj/Debug/BombermanGame.csproj.GenerateResource.Cache
-obj/Debug/BombermanGame.csprojResolveAssemblyReference.cache
-obj/Debug/BombermanGame.exe
-obj/Debug/BombermanGame.pdb
-obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache
