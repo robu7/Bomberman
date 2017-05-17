@@ -17,7 +17,7 @@ namespace BombermanGame
         private int range;
         private Animation spriteAnimation;
 
-        public Player(PointF position) : base(position, Properties.Resources.PlayerSprite) { 
+        public Player(PointF position) : base(position) { 
             direction = Game.Direction.None;
             spriteAnimation = new PlayerAnimation(Properties.Resources.blue);
             draw = true;

@@ -20,7 +20,7 @@ namespace BombermanGame
         public Point MapPos { get { return mapPosition; } }
 
         public Fire(PointF position, FireType direction, double startTime)
-            : base(position, Properties.Resources.fire) {
+            : base(position) {
 
             spriteAnimation = FireAnimation.getFireAnimation(direction);
             spriteAnimation.start(0, startTime);
@@ -28,7 +28,7 @@ namespace BombermanGame
         }
 
         public Fire(Point position, FireType direction, double startTime)
-         : base(position, Properties.Resources.fire) {
+         : base(position) {
             spriteAnimation = FireAnimation.getFireAnimation(direction);
             spriteAnimation.start(0, startTime);
             timeToLive = 1;
