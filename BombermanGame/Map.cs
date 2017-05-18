@@ -77,13 +77,20 @@ namespace BombermanGame
             map[pos.X, pos.Y] = (newObj);
         }
 
-        public void addFire(Fire fire, Point pos) {
+        public void addFire(Fire newFire, Point pos) {
             //Console.WriteLine("Fire added at: {0}", pos);
             if (map[pos.X, pos.Y] is Fire) {
-                itemsToUpdate.RemoveAll(item => item.MapPos == pos);
+                Fire currentFire = map[pos.X, pos.Y] as Fire;
+                if (currentFire.TimeToLive != newFire.TimeToLive) {
+                    itemsToUpdate.RemoveAll(item => item.MapPos == pos);
+                    map[pos.X, pos.Y] = newFire;
+                    itemsToUpdate.Add(newFire);
+                }
             }
-            map[pos.X, pos.Y] = fire;
-            itemsToUpdate.Add(fire);
+            else {
+                map[pos.X, pos.Y] = newFire;
+                itemsToUpdate.Add(newFire);
+            }
         }
 
         public void destroyObject(Point pos) {

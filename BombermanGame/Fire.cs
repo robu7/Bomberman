@@ -15,6 +15,7 @@ namespace BombermanGame
 
         private Animation spriteAnimation;
         private double timeToLive;
+        public double TimeToLive { get { return timeToLive; } }
         private bool finished = false;
         public bool Finished { get { return finished; } }
         public Point MapPos { get { return mapPosition; } }

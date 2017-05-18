@@ -24,8 +24,8 @@ namespace BombermanGame
             initBomb();
         }
 
-        public Bomb(Point position, Player _owner)
-             : base(position) {
+        public Bomb(Point mapPosition, Player _owner)
+             : base(mapPosition) {
             owner = _owner;
             initBomb();
         }

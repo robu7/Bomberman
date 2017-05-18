@@ -340,7 +340,8 @@ namespace BombermanGame
                     objectToDestroy = elem as IDestroyable;
                     objectToDestroy.destroy();
                     destroyObject(objectToDestroy as MapObject);
-                    map.addFire(new Fire(elemPos, fireType, totalTime), elemPos);
+                    if(!(elem is Bomb))
+                        map.addFire(new Fire(elemPos, fireType, totalTime), elemPos);
                     break;
                 }
                 else if (elem is BombermanGame.Ground || elem is BombermanGame.Fire) {
