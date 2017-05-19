@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
 using System.Timers;
-
+using BombermanGame.Animations;
 
 namespace BombermanGame
 {
@@ -19,7 +19,7 @@ namespace BombermanGame
 
         public Player(PointF position) : base(position) { 
             direction = Game.Direction.None;
-            spriteAnimation = new PlayerAnimation(Properties.Resources.blue);
+            spriteAnimation = PlayerAnimations.GetWalkAnimation(Game.Direction.Down, 0.6);
             draw = true;
             alive = true;
             bombCap = 4;
@@ -36,12 +36,17 @@ namespace BombermanGame
         public bool shouldDraw() { return draw; }
         private void stopDrawing() { draw = false; }
 
-        public void startAnimating(Game.Direction direction) { spriteAnimation.start(direction, 0); }
+        public void startAnimating(Game.Direction direction, double currentTime) {
+            if (this.spriteAnimation == null || direction != this.direction) {
+                this.spriteAnimation = PlayerAnimations.GetWalkAnimation(direction, 0.6);
+            }
+            this.spriteAnimation.start(currentTime);
+        }
         public void stopAnimating() { spriteAnimation.stop(); }
 
-        public override Bitmap getSprite() { return spriteAnimation.getFrame(); }
+        public override Bitmap getSprite() { return spriteAnimation?.CurrentFrame; }
 
-        public override void update(double tick) {
+        public override void update(double tick, double currentTime) {
             mapPosition.X = (int)Math.Round(position.X / Game.tileSize);
             mapPosition.Y = (int)Math.Round(position.Y / Game.tileSize);
 
@@ -49,7 +54,7 @@ namespace BombermanGame
             position.Y += velocity.Y * (float)tick;
             hitbox.Location = position;
 
-            spriteAnimation.update(tick, 0);
+            spriteAnimation?.update(tick, currentTime);
             //hitbox = new RectangleF(position, new SizeF(Game.tileSize, Game.tileSize));
             //direction = Game.Direction.None;
         }
@@ -86,26 +91,30 @@ namespace BombermanGame
             }
         }
       
-        public void updateMovement(Game.Direction updatedDirection) {
+        public void updateMovement(Game.Direction updatedDirection, double currentTime) {
+            if (updatedDirection == this.direction) {
+                // No need to update when direction is the same
+                return;
+            }
             switch (updatedDirection) {
                 case Game.Direction.Up:
                     setVelocity(new PointF(0, -225));
-                    startAnimating(Game.Direction.Up);
+                    startAnimating(Game.Direction.Up, currentTime);
                     setDirection(Game.Direction.Up);
                     break;
                 case Game.Direction.Down:
                     setVelocity(new PointF(0, 225));
-                    startAnimating(Game.Direction.Down);
+                    startAnimating(Game.Direction.Down, currentTime);
                     setDirection(Game.Direction.Down);
                     break;
                 case Game.Direction.Left:
                     setVelocity(new PointF(-225, 0));
-                    startAnimating(Game.Direction.Left);
+                    startAnimating(Game.Direction.Left, currentTime);
                     setDirection(Game.Direction.Left);
                     break;
                 case Game.Direction.Right:
                     setVelocity(new PointF(225, 0));
-                    startAnimating(Game.Direction.Right);
+                    startAnimating(Game.Direction.Right, currentTime);
                     setDirection(Game.Direction.Right);
                     break;
                 case Game.Direction.None:
@@ -121,7 +130,7 @@ namespace BombermanGame
         public void destroy() {
             alive = false;
             Console.WriteLine("Destroy player ");
-            (spriteAnimation as PlayerAnimation).startDeathAnimation();
+            this.spriteAnimation = PlayerAnimations.GetDeathAnimation(1);
             Timer deathTimer = new Timer(1200);
             deathTimer.AutoReset = false;
             deathTimer.Elapsed += delegate { stopDrawing(); };

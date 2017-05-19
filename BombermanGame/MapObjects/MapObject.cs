@@ -49,7 +49,7 @@ namespace BombermanGame
          
         }
 
-        public abstract void update(double elapsedTime);
+        public abstract void update(double elapsedTime, double totalTime);
         public abstract void collide();
 
 

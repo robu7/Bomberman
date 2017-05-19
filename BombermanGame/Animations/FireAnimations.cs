@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Drawing;
 
 namespace BombermanGame {
-    class FireAnimation : Animation {
 
-        private const double timeBetweenFrames = 0.2;
+    static class FireAnimations {
 
         // Used to only extract sprites from the original resources once
         private static readonly IReadOnlyDictionary<FireType, IReadOnlyList<Bitmap>> sprites = new Dictionary<FireType, IReadOnlyList<Bitmap>> {
@@ -37,30 +36,13 @@ namespace BombermanGame {
         /// <summary>
         /// Returns the appropriate animation for the specified part of an explosion fire
         /// </summary>
-        public static FireAnimation getFireAnimation(FireType direction) {
+        public static Animation getFireAnimation(FireType direction, double animationDuration) {
             // Get pre-generated sprites
             IReadOnlyList<Bitmap> spriteSequence;
             if (!sprites.TryGetValue(direction, out spriteSequence)) {
                 throw new Exception("Unknown Fire Type: " + direction);
             }
-            return new FireAnimation(spriteSequence);
-        }
-
-        private FireAnimation(IReadOnlyList<Bitmap> spriteSequence) {
-            currentFrame = 0;
-            interval = timeBetweenFrames;
-            this.spriteSequence = spriteSequence;
-        }
-
-        public override void start(Game.Direction direction, double animationStartTime) { this.animationStartTime = animationStartTime; }
-
-        public override void stop() {
-            currentFrame = 0;
-        }
-
-        public override void update(double tick, double totalTime) {
-            double elapsed = totalTime - this.animationStartTime;
-            this.currentFrame = Math.Min((int)Math.Floor(elapsed / interval), 6);
+            return new Animation(spriteSequence, animationDuration, false);
         }
     }
 }

@@ -14,36 +14,34 @@ namespace BombermanGame
     {
 
         private Animation spriteAnimation;
-        private double timeToLive;
-        public double TimeToLive { get { return timeToLive; } }
-        private bool finished = false;
-        public bool Finished { get { return finished; } }
-        public Point MapPos { get { return mapPosition; } }
+        public double TimeToLive { get; private set; }
+        public bool Finished { get; private set; }
+        public Point MapPos => this.mapPosition;
 
         public Fire(PointF position, FireType direction, double startTime)
             : base(position) {
-
-            spriteAnimation = FireAnimation.getFireAnimation(direction);
-            spriteAnimation.start(0, startTime);
-            timeToLive = 1;
+            TimeToLive = 1;
+            spriteAnimation = FireAnimations.getFireAnimation(direction, TimeToLive);
+            spriteAnimation.start(startTime);
         }
 
         public Fire(Point position, FireType direction, double startTime)
          : base(position) {
-            spriteAnimation = FireAnimation.getFireAnimation(direction);
-            spriteAnimation.start(0, startTime);
-            timeToLive = 1;
+            TimeToLive = 1;
+            spriteAnimation = FireAnimations.getFireAnimation(direction, TimeToLive);
+            spriteAnimation.start(startTime);
+            
         }
 
 
         //public override Bitmap getSprite() { return spriteAnimation.getFrame(); }
-        public override Bitmap getSprite() { return spriteAnimation.getFrame(); }
+        public override Bitmap getSprite() { return spriteAnimation.CurrentFrame; }
 
         public void update(double tick, double totalTime) {
-            timeToLive -= tick;
+            TimeToLive -= tick;
             spriteAnimation.update(tick, totalTime);
-            if (timeToLive <= 0) {
-                finished = true;
+            if (TimeToLive <= 0) {
+                Finished = true;
                 spriteAnimation.stop();
             }
         }

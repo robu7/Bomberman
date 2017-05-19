@@ -145,7 +145,7 @@ namespace BombermanGame
                      */
                     if (myPlayerInstance.isAlive()) {
                         if (inputHandler.UpdatedInput) {
-                            myPlayerInstance.updateMovement(inputHandler.PressedDirection);
+                            myPlayerInstance.updateMovement(inputHandler.PressedDirection, currentTime);
                             communicationHandler.Broadcast(PacketBuilder.Build_PlayerMovement(myID, inputHandler.PressedDirection));
                             inputHandler.UpdatedInput = false;
                         }
@@ -161,8 +161,8 @@ namespace BombermanGame
                     /*
                      * Step 3: Increase bomb timers and explosions
                      */
-                    updateBombs(delta, t);
-                    map.updateAll(delta, t);
+                    updateBombs(delta, currentTime);
+                    map.updateAll(delta, currentTime);
 
 
                     /*
@@ -170,7 +170,7 @@ namespace BombermanGame
                      */
                     foreach (var player in players) {
                         if (player.Value.isAlive()) {
-                            player.Value.update(delta);
+                            player.Value.update(delta, currentTime);
                             checkPlayerCollision(player.Value);
                         }
                     }
@@ -272,7 +272,7 @@ namespace BombermanGame
 
         private void updatePlayerMovement(Player player, Direction moveDirection) {
             Console.WriteLine("Player: {0} started moving: {1}", players.First(x => x.Value == player).Key, moveDirection.ToString());
-            player.updateMovement(moveDirection);
+            player.updateMovement(moveDirection, this.currentTime);
         }
 
         private void startPlayerMovement(PlayerMovement newMove) {

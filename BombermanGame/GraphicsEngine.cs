@@ -53,15 +53,22 @@ namespace BombermanGame
             
             try {
                 foreach (MapObject mapObject in map.getMap()) {
-                    frameGraphics.DrawImage(mapObject.getSprite(), mapObject.getPosition());
+                    var sprite = mapObject.getSprite();
+                    if (sprite != null) {
+                        frameGraphics.DrawImage(sprite, mapObject.getPosition());
+                    }
                 }
             }
             catch {
                 Console.WriteLine("Exception in graphic enginge");
             }
             foreach (var player in players) {
-                if (player.shouldDraw())
-                    frameGraphics.DrawImage(player.getSprite(), player.getPosition());
+                if (player.shouldDraw()) {
+                    var sprite = player.getSprite();
+                    if (sprite != null) {
+                        frameGraphics.DrawImage(player.getSprite(), player.getPosition());
+                    }
+                }
             }
 
 
