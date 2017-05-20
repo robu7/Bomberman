@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Timers;
 using System.Media;
 using System.Diagnostics;
+using BombermanGame.Powerups;
 
 namespace BombermanGame
 {
@@ -198,6 +199,11 @@ namespace BombermanGame
                     player.destroy();
                     return;
                 }
+                else if (elem is Powerup) {
+                    Powerup powerup = elem as Powerup;
+                    player.applyPowerUp(powerup);
+                    destroyObject(elem);
+                }
             }
 
             /*
@@ -207,7 +213,7 @@ namespace BombermanGame
             elem = map.getElem(nextMapPos);
             if (isCollidingWith(player, elem)) {
                 Console.WriteLine("Colliding with {1} at {0}", nextMapPos, elem);
-                if (!(elem is Fire)) {
+                if (!(elem is Fire || elem is Powerup)) {
                     player.collide();
                 }
             }

@@ -40,7 +40,7 @@ namespace BombermanGame
                 }
             }*/
 
-            panelGraphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighSpeed;
+            //panelGraphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighSpeed;
         }
 
         public void startRendering() { renderTiming.Start(); }

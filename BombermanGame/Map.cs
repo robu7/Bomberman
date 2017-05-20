@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
+using BombermanGame.Powerups;
 
 namespace BombermanGame
 {
@@ -21,27 +22,12 @@ namespace BombermanGame
         //private Ground ground;
 
         public Map(int numPlayers = 1) {
-            initMap();
             itemsToUpdate = new List<ITimedMapObject>();
+            initMap();
             //ground = new Ground(new PointF(0,0));
         }
 
         public MapObject[,] getMap() { return map; }
-
-        public List<MapObject> getTopLayer() {
-            List<MapObject> topLayer = new List<MapObject>();
-            MapObject topElem;
-            lock (mapObjects) {
-                for (int x = 0; x < 11; ++x) {
-                    for (int y = 0; y < 11; ++y) {
-                        topElem = mapObjects[x, y].Peek();
-                        if (topElem != null)
-                            topLayer.Add(mapObjects[x, y].Peek());
-                    }
-                }
-            }
-            return topLayer;
-        }
 
         private void initMap() {
 
@@ -64,7 +50,9 @@ namespace BombermanGame
             map[1, 2] = new Ground(new PointF(1 * Game.tileSize, 2 * Game.tileSize));
             map[1, 3] = new Ground(new PointF(1 * Game.tileSize, 3 * Game.tileSize));
             map[2, 1] = new Ground(new PointF(2 * Game.tileSize, 1 * Game.tileSize));
-            map[3, 1] = new Ground(new PointF(3 * Game.tileSize, 1 * Game.tileSize));
+            //map[3, 1] = new Ground(new PointF(3 * Game.tileSize, 1 * Game.tileSize));
+            map[3, 1] = new Powerup(new Point(3, 1), PowerUpType.RangeBoost);
+            itemsToUpdate.Add(map[3, 1] as ITimedMapObject);
             //mapObjects[3, 1].Push(new Fire(new PointF(3 * Game.tileSize, 1 * Game.tileSize)));
         }
 

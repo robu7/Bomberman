@@ -76,6 +76,7 @@
     <Compile Include="Network\Packet.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="PlayerInfo.cs" />
+    <Compile Include="Powerups\Powerup.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="MenuControls\JoinGameMenuControl.cs">

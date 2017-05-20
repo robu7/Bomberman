@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Drawing;
 using System.Timers;
 using BombermanGame.Animations;
+using BombermanGame.Powerups;
 
 namespace BombermanGame
 {
@@ -23,7 +24,7 @@ namespace BombermanGame
             draw = true;
             alive = true;
             bombCap = 4;
-            range = 2;
+            range = 1;
         }
 
 
@@ -126,6 +127,13 @@ namespace BombermanGame
             
         }
 
+        public void applyPowerUp(Powerup powerUpType) {
+            switch(powerUpType.Type) {
+                case PowerUpType.RangeBoost:
+                    range += 1;
+                    break;
+            }
+        }
 
         public void destroy() {
             alive = false;
