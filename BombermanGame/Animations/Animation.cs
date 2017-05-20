@@ -57,6 +57,7 @@ namespace BombermanGame {
 
         public void stop() {
             this.State = AnimationState.Stopped;
+            this.CurrentFrame = spriteSequence[0];
         }
     }
 }

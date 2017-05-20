@@ -114,32 +114,23 @@ namespace BombermanGame
 
             double t = 0.0;
             double dt = 1.0/60.0;
-            //Console.WriteLine(dt);
             double delta;
 
             timer.Start();
             currentTime = ((double)timer.ElapsedMilliseconds) / 1000;
-
-            //currentTime = Environment.TickCount / 1000.0;
             
-
             while (true) {
 
                 /*
                  * Step 1: determine timestep values
                  */
-                //newTime = Environment.TickCount / 1000.0;
                 newTime = ((double)timer.ElapsedMilliseconds) / 1000;
                 frameTime = newTime - currentTime;
                 currentTime = newTime;
 
-                //Console.WriteLine("frametime: "+ frameTime);
                 while (frameTime > 0.0) {
-
-                    //Console.WriteLine(dt);
                     delta = Math.Min(frameTime, dt);
-                    //delta = dt;
-                    //Console.WriteLine(delta);
+
                     /*
                      * Step 2: Check keyboard input and replicate to other players
                      */
@@ -191,13 +182,9 @@ namespace BombermanGame
                 /*
                 * Step 6: Draw current game state
                 */
-                //double test = Environment.TickCount / 1000.0;
                 gEngine.draw();
                 //communicationHandler.Broadcast(PacketBuilder.Build_Ready(myID));
                 //readySignal.WaitOne();
-                //readySignal.
-                //double test2 = Environment.TickCount / 1000.0;
-                //Console.WriteLine(test2-test);
             }
         }
 
@@ -256,7 +243,7 @@ namespace BombermanGame
          * Function to handle destruction of object
          */
         public void destroyObject(MapObject objectToDestroy) {
-                map.destroyObject(objectToDestroy.getMapPosition());
+            map.destroyObject(objectToDestroy.getMapPosition());
             //objectInMotion.Remove(player);
         }
 
