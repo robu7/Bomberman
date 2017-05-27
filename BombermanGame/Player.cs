@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Drawing;
 using System.Timers;
 using BombermanGame.Animations;
@@ -10,129 +6,201 @@ using BombermanGame.Powerups;
 
 namespace BombermanGame
 {
-    class Player : MoveableObject, IDestroyable
-    {
+    class Player : FloatingObject {
         private bool alive;
         private bool draw;
-        private int bombCap;
-        private int range;
+        private double lastUpdateTime;
         private Animation spriteAnimation;
 
-        public Player(PointF position) : base(position) { 
-            direction = Game.Direction.None;
-            spriteAnimation = PlayerAnimations.GetWalkAnimation(Game.Direction.Down, 0.6);
+        public Player(Tile startTile) : base(startTile, Game.boxSize) {
+            spriteAnimation = PlayerAnimations.GetWalkAnimation(Game.Direction.South, 0.6);
             draw = true;
             alive = true;
-            bombCap = 4;
-            range = 1;
+            BombCap = 4;
+            BombRange = 1;
         }
 
-
-        public int getBombCap() { return bombCap; }
-        public int getBombRange() { return range; }
-        public void incBombCap() { ++bombCap; }
-        public void decBombCap() { --bombCap; }
+        public int BombCap { get; set; }
+        public int BombRange { get; set; }
 
         public bool isAlive() { return alive; }
         public bool shouldDraw() { return draw; }
         private void stopDrawing() { draw = false; }
 
         public void startAnimating(Game.Direction direction, double currentTime) {
-            if (this.spriteAnimation == null || direction != this.direction) {
-                this.spriteAnimation = PlayerAnimations.GetWalkAnimation(direction, 0.6);
-            }
+            this.spriteAnimation = PlayerAnimations.GetWalkAnimation(direction, 0.6);
             this.spriteAnimation.start(currentTime);
         }
         public void stopAnimating() { spriteAnimation.stop(); }
 
-        public override Bitmap getSprite() { return spriteAnimation?.CurrentFrame; }
+        private Tile debugNextTile;
+        public override void Update(double currentTime) {
+            var timeDelta = currentTime - this.lastUpdateTime;
+            var previousBounds = this.bounds;
 
-        public override void update(double tick, double currentTime) {
-            mapPosition.X = (int)Math.Round(position.X / Game.tileSize);
-            mapPosition.Y = (int)Math.Round(position.Y / Game.tileSize);
+            var xDelta = Velocity.X * (float)timeDelta;
+            var yDelta = Velocity.Y * (float)timeDelta;
 
-            position.X += velocity.X * (float)tick;
-            position.Y += velocity.Y * (float)tick;
-            hitbox.Location = position;
+            var nextTile = this.currentTile.GetNextTileInDirection(Direction);
+            debugNextTile = nextTile;
+            var newBounds = new RectangleF(new PointF(this.bounds.Left + xDelta, this.bounds.Top + yDelta), this.bounds.Size);
+            if (!nextTile.Bounds.IntersectsWith(this.bounds) && nextTile.Bounds.IntersectsWith(newBounds)) {
+                // Entering a new tile
+                if (!CanEnterTile(nextTile)) {
+                    // Not allowed to enter tile, constrain the movement
+                    if (xDelta != 0) {
+                        // Adjust x movement
+                        if (xDelta < 0) {
+                            xDelta = Math.Max(this.currentTile.Bounds.Left - this.bounds.Left, xDelta);
+                        } else {
+                            xDelta = Math.Min(this.currentTile.Bounds.Right - this.bounds.Right, xDelta);
+                        }
+                    }
+                    if (yDelta != 0) {
+                        // Adjust y movement
+                        if (yDelta < 0) {
+                            yDelta = Math.Max(this.currentTile.Bounds.Top - this.bounds.Top, yDelta);
+                        } else {
+                            yDelta = Math.Min(this.currentTile.Bounds.Bottom - this.bounds.Bottom, yDelta);
+                        }
+                    }
+                    Velocity = new PointF(0, 0);
+                }
+            }
 
-            spriteAnimation?.update(tick, currentTime);
-            //hitbox = new RectangleF(position, new SizeF(Game.tileSize, Game.tileSize));
-            //direction = Game.Direction.None;
+            MoveBy(xDelta, yDelta);
+
+            // Mark tiles around the player as dirty
+            this.currentTile.MarkAsDirty();
+            this.currentTile.West.MarkAsDirty();
+            this.currentTile.North.MarkAsDirty();
+            this.currentTile.East.MarkAsDirty();
+            this.currentTile.South.MarkAsDirty();
+
+            if (!this.currentTile.Bounds.Contains(this.centerPosition) && nextTile.Bounds.Contains(this.centerPosition)) {
+                // Switched current tile
+                this.currentTile = nextTile;
+            }
+
+            if (!Velocity.IsEmpty) {
+                AlignWithTileBounds();
+            }
+
+            InteractWithTileContent(this.currentTile);
+
+            spriteAnimation?.update(currentTime);
+            this.lastUpdateTime = currentTime;
         }
 
-        public override void collide() {
-            hitbox.Location = new PointF(mapPosition.X * Game.tileSize, mapPosition.Y * Game.tileSize);
-            switch (direction) {
-                case Game.Direction.Up:
-                case Game.Direction.Down:
-                    position.Y = mapPosition.Y * Game.tileSize;
+        private bool CanEnterTile(Tile tileToEnter) {
+            if (tileToEnter == Tile.OutOfBounds) {
+                return false;
+            }
+
+            if (tileToEnter.Object is Block || tileToEnter.Object is ConstBlock) {
+                return false;
+            }
+
+            return true;
+        }
+
+        private void AlignWithTileBounds() {
+            switch (Direction) {
+                case Game.Direction.East:
+                case Game.Direction.West:
+                    // Adjust vertical position
+                    if (this.bounds.Top < this.currentTile.Bounds.Top) {
+                        MoveBy(0, this.currentTile.Bounds.Top - this.bounds.Top);
+                    } else if(this.bounds.Bottom > this.currentTile.Bounds.Bottom) {
+                        MoveBy(0, this.currentTile.Bounds.Bottom - this.bounds.Bottom);
+                    }
                     break;
-                case Game.Direction.Left:
-                case Game.Direction.Right:
-                    position.X = mapPosition.X * Game.tileSize;
+                case Game.Direction.North:
+                case Game.Direction.South:
+                    // Adjust horizontal position
+                    if (this.bounds.Left < this.currentTile.Bounds.Left) {
+                        MoveBy(this.currentTile.Bounds.Left - this.bounds.Left, 0);
+                    } else if (this.bounds.Right > this.currentTile.Bounds.Right) {
+                        MoveBy(this.currentTile.Bounds.Right - this.bounds.Right, 0);
+                    }
                     break;
             }
-            velocity.X = 0;
-            velocity.Y = 0;
-            direction = Game.Direction.None;
-            stopAnimating();
-
         }
 
-        public void smoothAdjustPosition(Game.Direction adjustDirection) {
-            switch (adjustDirection) {
-                case Game.Direction.Right:
-                case Game.Direction.Left:
-                    position.X = mapPosition.X * Game.tileSize;
-                    break;
-                case Game.Direction.Up:
-                case Game.Direction.Down:
-                    position.Y = mapPosition.Y * Game.tileSize;
-                    break;
+        private void InteractWithTileContent(Tile enteredTile) {
+            var tileObject = enteredTile.Object;
+            if (tileObject is Fire) {
+                destroy();
+            } else if (tileObject is Powerup) {
+                (tileObject as Powerup).ApplyToPlayer(this);
             }
         }
-      
+
+        public override void Draw(Graphics g) {
+            var sprite = this.spriteAnimation?.CurrentFrame;
+            if (sprite == null) {
+                return;
+            }
+            // Uncomment for debug printing of player updates
+            //g.FillRectangle(Brushes.CornflowerBlue, this.currentTile.Bounds);
+            //if (this.debugNextTile != null) {
+            //    g.FillRectangle(Brushes.OrangeRed, this.debugNextTile.Bounds);
+            //}
+            g.DrawImage(sprite, this.bounds.Location);
+            //g.DrawRectangle(Pens.Coral, (int)this.bounds.Left, (int)this.bounds.Top, (int)this.bounds.Width, (int)this.bounds.Height);
+            //g.FillRectangle(Brushes.GreenYellow, new RectangleF(this.centerPosition.X - 5, this.centerPosition.Y - 5, 10, 10));
+        }
+
         public void updateMovement(Game.Direction updatedDirection, double currentTime) {
-            if (updatedDirection == this.direction) {
+            if (updatedDirection == Direction) {
                 // No need to update when direction is the same
                 return;
             }
+
+            // Update direction
+            Direction = updatedDirection;
+
+            // Update velocity
             switch (updatedDirection) {
-                case Game.Direction.Up:
-                    setVelocity(new PointF(0, -225));
-                    startAnimating(Game.Direction.Up, currentTime);
-                    setDirection(Game.Direction.Up);
+                case Game.Direction.North:
+                    Velocity = new PointF(0, -225);
                     break;
-                case Game.Direction.Down:
-                    setVelocity(new PointF(0, 225));
-                    startAnimating(Game.Direction.Down, currentTime);
-                    setDirection(Game.Direction.Down);
+                case Game.Direction.South:
+                    Velocity = new PointF(0, 225);
                     break;
-                case Game.Direction.Left:
-                    setVelocity(new PointF(-225, 0));
-                    startAnimating(Game.Direction.Left, currentTime);
-                    setDirection(Game.Direction.Left);
+                case Game.Direction.West:
+                    Velocity = new PointF(-225, 0);
                     break;
-                case Game.Direction.Right:
-                    setVelocity(new PointF(225, 0));
-                    startAnimating(Game.Direction.Right, currentTime);
-                    setDirection(Game.Direction.Right);
+                case Game.Direction.East:
+                    Velocity = new PointF(225, 0);
                     break;
                 case Game.Direction.None:
-                    setVelocity(new PointF(0, 0));
-                    stopAnimating();
-                    setDirection(Game.Direction.None);
+                    Velocity = new PointF(0, 0);
                     break;
             }
-            
+
+            // Update animation
+            if (updatedDirection == Game.Direction.None) {
+                stopAnimating();
+            } else {
+                startAnimating(updatedDirection, currentTime);
+            }
         }
 
-        public void applyPowerUp(Powerup powerUpType) {
-            switch(powerUpType.Type) {
-                case PowerUpType.RangeBoost:
-                    range += 1;
-                    break;
+        public void DeployBomb() {
+            //Console.WriteLine("Bomb deployed at: {0} by player: {1}", player.getMapPosition(), players.First(x => x.Value == player).Key);
+            if (BombCap == 0) {
+                return;
             }
+            if (this.currentTile?.Object as Bomb != null) {
+                // There is already a bomb at this location
+                return;
+            }
+
+            // Preconditions ok, deploy the bomb
+            BombCap--;
+            Bomb newBomb = new Bomb(this, this.lastUpdateTime);
+            this.currentTile.Object = newBomb;
         }
 
         public void destroy() {
@@ -144,6 +212,5 @@ namespace BombermanGame
             deathTimer.Elapsed += delegate { stopDrawing(); };
             deathTimer.Start();
         }
-
     }
 }

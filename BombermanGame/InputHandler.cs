@@ -55,19 +55,19 @@ namespace BombermanGame
                 currentKey = pressedButton;
                 switch (pressedButton) {
                     case Keys.W:
-                        pressedDirection = Game.Direction.Up;
+                        pressedDirection = Game.Direction.North;
                         updatedInput = true;
                         break;
                     case Keys.S:
-                        pressedDirection = Game.Direction.Down;
+                        pressedDirection = Game.Direction.South;
                         updatedInput = true;
                         break;
                     case Keys.A:
-                        pressedDirection = Game.Direction.Left;
+                        pressedDirection = Game.Direction.West;
                         updatedInput = true;
                         break;
                     case Keys.D:
-                        pressedDirection = Game.Direction.Right;
+                        pressedDirection = Game.Direction.East;
                         updatedInput = true;
                         break;
                     case Keys.B:

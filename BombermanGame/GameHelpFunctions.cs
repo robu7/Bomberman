@@ -25,7 +25,7 @@ namespace BombermanGame
         * ---Time variables to ensure even game flow---
         */
         private double newTime;
-        private double frameTime;
+        private double timeUntilNextFrame;
         private double currentTime = 0;
 
         /*
@@ -42,9 +42,6 @@ namespace BombermanGame
          * Function to start game
          */
         public void startGame() {
-            //player1 = new Player(new PointF(1 * Game.tileSize, 1 * Game.tileSize));
-            //gEngine = new GraphicsEngine();
-            //gEngine.startGraphics();
             GameThread = new Thread(new ThreadStart(GameLoop));
             GameThread.Start();
         }
@@ -53,43 +50,8 @@ namespace BombermanGame
          * Function to stop game
          */
         public void stopGame() {
-            //gEngine.stopGraphics();
             this.GameThread.Abort();
         }
-
-        private bool isCollidingWith(MapObject obj, MapObject elem ) {
-
-            if (!(elem is BombermanGame.Ground)) {
-                if (obj.getHitbox().IntersectsWith(elem.getHitbox())) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        private Point getNextMapPosition(MoveableObject obj) {
-
-            Point nextMapPos = obj.getMapPosition();
-            switch (obj.getDirection()) {
-                case Direction.None:
-                    break;
-                case Direction.Up:
-                    nextMapPos.Y -= 1;
-                    break;
-                case Direction.Down:
-                    nextMapPos.Y += 1;
-                    break;
-                case Direction.Left:
-                    nextMapPos.X -= 1;
-                    break;
-                case Direction.Right:
-                    nextMapPos.X += 1;
-                    break;
-            }
-            return nextMapPos;
-        }
-
-
     }
 }
 

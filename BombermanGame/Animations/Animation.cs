@@ -11,7 +11,7 @@ namespace BombermanGame {
         Stopped
     }
 
-    class Animation : IUpdateable {
+    class Animation {
         private readonly IReadOnlyList<Bitmap> spriteSequence = new List<Bitmap>();
         private double cycleDuration;
         private bool repeatCycle;
@@ -31,14 +31,14 @@ namespace BombermanGame {
             this.animationStartTime = animationStartTime;
             State = AnimationState.InProgress;
             // Set initial frame
-            update(0, animationStartTime);
+            update(animationStartTime);
         }
 
-        public void update(double tick, double totalTime) {
+        public void update(double currentTime) {
             if (State != AnimationState.InProgress) {
                 return;
             }
-            var timeSinceStart = totalTime - animationStartTime;
+            var timeSinceStart = currentTime - animationStartTime;
             var timePerSprite = cycleDuration / this.spriteSequence.Count;
             var nextFrameIndex = (int)Math.Floor(timeSinceStart / timePerSprite);
 

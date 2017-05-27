@@ -1,19 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Drawing;
+﻿using System.Drawing;
 
-namespace BombermanGame
-{
-    class ConstBlock : MapObject
-    {
+namespace BombermanGame {
+    class ConstBlock : FixedMapObject {
+
         private static Bitmap sprite = new Bitmap(Properties.Resources.constblock, Game.boxSize);
 
-         public ConstBlock(PointF position) : base(position) {}
+        public ConstBlock() : base(destructible: false) { }
 
+        public override void Draw(Graphics g) {
+            g.DrawImage(sprite, this.mapTile.Bounds.Location);
+        }
 
-         public override Bitmap getSprite() { return sprite; }
+        public override void Update(double totalTime) {
+            // Nothing to do here
+        }
     }
 }

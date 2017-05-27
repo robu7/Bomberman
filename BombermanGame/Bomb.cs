@@ -1,59 +1,84 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Drawing;
-using System.Timers;
+﻿using System.Drawing;
 
 namespace BombermanGame
 {
-    class Bomb : MapObject, IDestroyable 
-    {
+    class Bomb : FixedMapObject {
+        
+        private static Bitmap sprite = new Bitmap(Properties.Resources.bomb, Game.boxSize);
 
         private Player owner;
-        static private Bitmap sprite = new Bitmap(Properties.Resources.bomb, Game.boxSize);
-        private double timeToLive;
-        private int range;
-        private bool hasExploded;
-        public bool HasExploded { get { return hasExploded; } }
+        private double creationTime;
+        private readonly double timeToLive = 2.5;
+        private readonly int range;
+        public bool HasExploded { get; private set; } = false;
 
-        public Bomb(PointF position, Player _owner)
-            : base(position) {
-            owner = _owner;
-            initBomb();
+        public Bomb(Player owner, double creationTime) {
+            this.owner = owner;
+            this.creationTime = creationTime;
+            this.range = owner.BombRange;
         }
 
-        public Bomb(Point mapPosition, Player _owner)
-             : base(mapPosition) {
-            owner = _owner;
-            initBomb();
+        protected override void OnDestroy(double currentTime) {
+            this.mapTile.Object = null;
+            Explode(currentTime);
+            this.mapTile = null;
         }
 
-        private void initBomb() {
-            range = owner.getBombRange();
-            timeToLive = 2.5;// set time to 2.5 seconds
-            hasExploded = false;
-        }
-
-        public Player getOwner() { return owner; }
-        public int getRange() { return range; }
-
-        public override Bitmap getSprite() { return sprite; }
-
-        public bool update(double tick) {
-            if (!hasExploded) {
-                timeToLive -= tick;
-                if (timeToLive <= 0) {
-                    hasExploded = true;
-                    return true;
-                }
+        public override void Update(double currentTime) {
+            if (HasExploded) {
+                return;
             }
-            return false;       
+            if (currentTime - creationTime >= timeToLive) {
+                Explode(currentTime);
+            }      
         }
 
-        public void destroy() {
-            timeToLive = 0;
+        private void Explode(double currentTime) {
+            //Console.WriteLine("Bomb exploded at: {0}", bomb.getMapPosition());
+
+            this.mapTile.Object = new Fire(FireType.Center, currentTime);
+            
+            explodeInDirection(Game.Direction.North, FireType.Up, currentTime);
+            explodeInDirection(Game.Direction.South, FireType.Down, currentTime);
+            explodeInDirection(Game.Direction.West, FireType.Left, currentTime);
+            explodeInDirection(Game.Direction.East, FireType.Right, currentTime);
+
+            HasExploded = true;
+            this.owner.BombCap++;
+        }
+        
+        private void explodeInDirection(Game.Direction direction, FireType fireType, double currentTime) {
+            FireType connectionType = (fireType == FireType.Up || fireType == FireType.Down) ? FireType.Vertical : FireType.Horizontal;
+
+            var remainingRange = this.range;
+            var tile = this.mapTile;
+            while(remainingRange > 0) {
+                tile = tile.GetNextTileInDirection(direction);
+                remainingRange--;
+                if (tile == Tile.OutOfBounds) {
+                    break;
+                }
+
+                var elem = tile.Object;
+                if (elem == null) {
+                    if (remainingRange == 0) {
+                        tile.Object = new Fire(fireType, currentTime);
+                    } else {
+                        tile.Object = new Fire(connectionType, currentTime);
+                    }
+                } else if (elem.IsDescructible) {
+                    elem.Destroy(currentTime);
+                    if (tile.Object?.IsDescructible ?? true) {
+                        tile.Object = new Fire(fireType, currentTime);
+                    }
+                    break;
+                } else
+                    break;
+            }
+        }
+
+        public override void Draw(Graphics g) {
+            g.DrawImage(sprite, this.mapTile.Bounds.Location);
         }
 
         public override string ToString() {

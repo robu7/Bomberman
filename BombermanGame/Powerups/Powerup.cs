@@ -5,17 +5,16 @@ namespace BombermanGame.Powerups
 {
     enum PowerUpType { ExtraBomb, RangeBoost, KickAbility }
 
-    class Powerup : MapObject, IDestroyable, ITimedMapObject
+    class Powerup : FixedMapObject
     {
-        static private Bitmap sprite;
+        private Bitmap sprite;
         public PowerUpType Type { get; set; }
+        public double CreationTime { get; }
         public double TimeToLive { get; private set; }
-        public bool Finished { get; private set; }
-        public Point MapPos => this.mapPosition;
 
-        public Powerup(Point mapPosition, PowerUpType type) :base(mapPosition){
+        public Powerup(PowerUpType type, double creationTime) {
             Type = type;
-            Finished = false;
+            CreationTime = creationTime;
             TimeToLive = 5;
 
             switch (type) {
@@ -31,17 +30,26 @@ namespace BombermanGame.Powerups
             }
         }
 
-        public override Bitmap getSprite() { return sprite; }
-
-        public void destroy() {
-            Finished = true;
+        public override void Update(double totalTime) {
+            if (totalTime - CreationTime >= TimeToLive) {
+                // Remove from the map
+                this.mapTile.Object = null;
+                this.mapTile = null;
+            }
         }
 
-        public void update(double tick, double totalTime) {
-            TimeToLive -= tick;
-            if (TimeToLive <= 0) {
-                Finished = true;
+        public override void Draw(Graphics g) {
+            g.DrawImage(this.sprite, this.mapTile.Bounds.Location);
+        }
+
+        public void ApplyToPlayer(Player player) {
+            switch (Type) {
+                case PowerUpType.RangeBoost:
+                    player.BombRange += 1;
+                    break;
             }
+            this.mapTile.Object = null;
+            this.mapTile = null;
         }
     }
 }

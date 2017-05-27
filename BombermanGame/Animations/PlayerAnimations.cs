@@ -70,16 +70,16 @@ namespace BombermanGame.Animations {
             // Get pre-generated sprites
             IReadOnlyList<Bitmap> spriteSequence = null;
             switch (walkDirection) {
-                case Game.Direction.Up:
+                case Game.Direction.North:
                     spriteSequence = up;
                     break;
-                case Game.Direction.Down:
+                case Game.Direction.South:
                     spriteSequence = down;
                     break;
-                case Game.Direction.Left:
+                case Game.Direction.West:
                     spriteSequence = left;
                     break;
-                case Game.Direction.Right:
+                case Game.Direction.East:
                     spriteSequence = right;
                     break;
                 default:

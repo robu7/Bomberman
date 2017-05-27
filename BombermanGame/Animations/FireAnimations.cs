@@ -21,14 +21,11 @@ namespace BombermanGame {
         /// Crops out sprites from an image containing the whole animation sequence
         /// </summary>
         private static List<Bitmap> buildSpriteSequence(Bitmap original) {
-            Bitmap sprite;
             Rectangle srcRect;
             List<Bitmap> sequence = new List<Bitmap>();
             for (int i = 0; i < 7; ++i) {
                 srcRect = new Rectangle(i * 32, 0, 32, 32);
-                sprite = (Bitmap)original.Clone(srcRect, original.PixelFormat);
-                sequence.Add(new Bitmap(sprite, Game.boxSize));
-                sprite.Dispose();
+                sequence.Add((Bitmap)original.Clone(srcRect, original.PixelFormat));
             }
             return sequence;
         }

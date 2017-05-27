@@ -10,40 +10,32 @@ namespace BombermanGame
 {
     public enum FireType { Center, Horizontal, Vertical, Up, Down, Left, Right };
 
-    class Fire : MapObject, ITimedMapObject
-    {
+    class Fire : FixedMapObject {
 
         private Animation spriteAnimation;
-        public double TimeToLive { get; private set; }
-        public bool Finished { get; private set; }
-        public Point MapPos => this.mapPosition;
 
-        public Fire(PointF position, FireType direction, double startTime)
-            : base(position) {
-            TimeToLive = 1;
-            spriteAnimation = FireAnimations.getFireAnimation(direction, TimeToLive);
+        public Fire(FireType direction, double startTime) : base(destructible: false) {
+            spriteAnimation = FireAnimations.getFireAnimation(direction, 1);
             spriteAnimation.start(startTime);
         }
 
-        public Fire(Point position, FireType direction, double startTime)
-         : base(position) {
-            TimeToLive = 1;
-            spriteAnimation = FireAnimations.getFireAnimation(direction, TimeToLive);
-            spriteAnimation.start(startTime);
-            
-        }
-
-
-        //public override Bitmap getSprite() { return spriteAnimation.getFrame(); }
-        public override Bitmap getSprite() { return spriteAnimation.CurrentFrame; }
-
-        public void update(double tick, double totalTime) {
-            TimeToLive -= tick;
-            spriteAnimation.update(tick, totalTime);
-            if (TimeToLive <= 0) {
-                Finished = true;
-                spriteAnimation.stop();
+        public override void Update(double totalTime) {
+            spriteAnimation.update(totalTime);
+            this.mapTile?.MarkAsDirty();
+            if (spriteAnimation.State == AnimationState.Stopped) {
+                this.mapTile.Object = null;
+                this.mapTile = null;
             }
+        }
+
+        public override void Draw(Graphics g) {
+            if (this.spriteAnimation.CurrentFrame == null) {
+                return;
+            }
+            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+            var oversizedBounds = this.mapTile.Bounds;
+            oversizedBounds.Inflate(1, 1);
+            g.DrawImage(this.spriteAnimation.CurrentFrame, oversizedBounds);
         }
 
         public override string ToString() {

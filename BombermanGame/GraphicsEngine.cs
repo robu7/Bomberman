@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Drawing;
-using System.Timers;
 
 namespace BombermanGame
 {
@@ -15,14 +11,12 @@ namespace BombermanGame
         Map map;
         Bitmap frame;
         Graphics frameGraphics;
-        Bitmap background;
-        Timer renderTiming;
 
         public GraphicsEngine(Graphics _panelGraphics, List<Player> _players, Map _map) {
             panelGraphics = _panelGraphics;
             players = _players;
             map = _map;
-            frame = new Bitmap(1100, 1100);
+            frame = new Bitmap(_map.Size.Width, _map.Size.Height);
             frameGraphics = Graphics.FromImage(frame);
 
             //renderTiming = new Timer(16);
@@ -43,38 +37,23 @@ namespace BombermanGame
             //panelGraphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighSpeed;
         }
 
-        public void startRendering() { renderTiming.Start(); }
+        //public void startRendering() { renderTiming.Start(); }
 
         public void draw() {
-
-            //panelGraphics.DrawRectangle(new Pen(Color.AliceBlue, 3), Rectangle.Round(player1.getHitbox()));
-            //panelGraphics.DrawRectangle(
-            //frameGraphics.DrawImage(background, 0, 0);
             
             try {
-                foreach (MapObject mapObject in map.getMap()) {
-                    var sprite = mapObject.getSprite();
-                    if (sprite != null) {
-                        frameGraphics.DrawImage(sprite, mapObject.getPosition());
-                    }
-                }
+                this.map.Draw(frameGraphics);
             }
             catch {
                 Console.WriteLine("Exception in graphic enginge");
             }
             foreach (var player in players) {
                 if (player.shouldDraw()) {
-                    var sprite = player.getSprite();
-                    if (sprite != null) {
-                        frameGraphics.DrawImage(player.getSprite(), player.getPosition());
-                    }
+                    player.Draw(frameGraphics);
                 }
             }
 
-
             panelGraphics.DrawImage(frame, 0, 0);
-            //panelGraphics.Dispose();
-            //panelGraphics.DrawImageUnscaledAndClipped();
         }
     }
 }

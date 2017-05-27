@@ -1,78 +1,65 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Drawing;
+﻿using System.Drawing;
 
-namespace BombermanGame
-{
-    abstract class MapObject 
-    {
-        protected PointF position;
-        protected Point mapPosition; 
-    //    protected Bitmap sprite;
-        protected RectangleF hitbox;
+namespace BombermanGame {
+    /// <summary>
+    /// An object that is bound to a tile on the map
+    /// </summary>
+    abstract class FixedMapObject {
+        protected Tile mapTile;
 
-        protected MapObject(PointF _position) {
-            position = _position;
-            mapPosition.X = (int)Math.Round(position.X / Game.tileSize);
-            mapPosition.Y = (int)Math.Round(position.Y / Game.tileSize);
-            hitbox = new RectangleF(position, new SizeF(Game.tileSize, Game.tileSize));
-        }
-        protected MapObject(Point _mapPosition) {
-            mapPosition = _mapPosition;
-            position.X = _mapPosition.X * Game.tileSize;
-            position.Y = _mapPosition.Y * Game.tileSize;
-            hitbox = new RectangleF(position, new SizeF(Game.tileSize, Game.tileSize));
+        public FixedMapObject(bool destructible = true) {
+            IsDescructible = destructible;
         }
 
-
-        /*
-         * Getters
-         */
-        public RectangleF getHitbox() { return hitbox; }
-        public abstract Bitmap getSprite();// { return sprite; }
-        public PointF getPosition() { return position; }
-        public Point getMapPosition() { return mapPosition; }
-    }
-
-    abstract class MoveableObject : MapObject, ICollideable
-    {
-
-        protected PointF velocity;    
-        //protected Point mapPosition; 
-        protected Game.Direction direction;
-
-        protected MoveableObject(PointF position) : base(position){
-            direction = Game.Direction.None;
-         
+        public void AttachToTile(Tile mapTile) {
+            this.mapTile = mapTile;
         }
 
-        public abstract void update(double elapsedTime, double totalTime);
-        public abstract void collide();
+        public bool IsDescructible { get; }
+        public void Destroy(double currentTime) {
+            if (!IsDescructible) {
+                return;
+            }
+            OnDestroy(currentTime);
+        }
+        protected virtual void OnDestroy(double currentTime) {
+            if (this.mapTile == null) {
+                return;
+            }
+            this.mapTile.Object = null;
+            this.mapTile = null;
+        }
 
-
-        public PointF getVelocity() { return velocity; }
-        //public Point getMapPosition() { return mapPosition; }
-        //public Point getNextMapPosition() { }
-
-        public Game.Direction getDirection() {  return direction; }
-        public void setVelocity(PointF newVelocity) { velocity = newVelocity; }
-        public void setDirection(Game.Direction newDirection) { direction = newDirection; }
-
+        public abstract void Update(double totalTime);
+        public abstract void Draw(Graphics g);
     }
 
+    /// <summary>
+    /// An object that is not positioned in a specific tile, but may move around on the map
+    /// </summary>
+    abstract class FloatingObject {
 
+        protected Tile currentTile;
+        protected RectangleF bounds;
+        protected PointF centerPosition;
 
-    interface IDestroyable
-    {
-        void destroy();
+        protected FloatingObject(Tile startLocationTile, Size size) {
+            this.currentTile = startLocationTile;
+            this.bounds = new RectangleF(this.currentTile.Bounds.Location, size);
+            this.centerPosition = new PointF(bounds.Left + bounds.Width / 2, bounds.Top + bounds.Height / 2);
+            Direction = Game.Direction.None;
+        }
+
+        protected void MoveBy(float xDelta, float yDelta) {
+            this.centerPosition.X += xDelta;
+            this.centerPosition.Y += yDelta;
+            this.bounds.Offset(xDelta, yDelta);
+        }
+
+        public abstract void Update(double totalTime);
+        public abstract void Draw(Graphics g);
+
+        public PointF Velocity { get; set; }
+        public Game.Direction Direction { get; set; }
     }
-
-    interface ICollideable
-    {
-        void collide();
-    }
-
 }

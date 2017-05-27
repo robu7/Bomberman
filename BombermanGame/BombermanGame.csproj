@@ -85,6 +85,7 @@
     <Compile Include="MenuControls\JoinGameMenuControl.Designer.cs">
       <DependentUpon>JoinGameMenuControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Tile.cs" />
     <EmbeddedResource Include="GameForm.resx">
       <DependentUpon>GameForm.cs</DependentUpon>
     </EmbeddedResource>
