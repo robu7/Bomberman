@@ -2,14 +2,7 @@
 using System.Drawing;
 using BombermanGame.Powerups;
 
-namespace BombermanGame
-{
-    interface ITimedMapObject : IUpdateable
-    {
-        bool Finished { get; }
-        Point MapPos { get; }
-    }
-
+namespace BombermanGame {
     class Map {
         private Tile[,] tiles;
 
@@ -92,12 +85,6 @@ namespace BombermanGame
             objects[3, 1] = new Powerup(PowerUpType.RangeBoost, 0);
 
             return new Map(objects);
-        }
-
-        private static void ConnectTiles(Tile[,] tiles) {
-            var cols = tiles.GetLength(0);
-            var rows = tiles.GetLength(1);
-            
         }
     }
 }

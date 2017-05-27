@@ -27,14 +27,14 @@ namespace BombermanGame {
         public AnimationState State { get; private set; }
         public Bitmap CurrentFrame { get; private set; }
 
-        public void start(double animationStartTime) {
+        public void Start(double animationStartTime) {
             this.animationStartTime = animationStartTime;
             State = AnimationState.InProgress;
             // Set initial frame
-            update(animationStartTime);
+            Update(animationStartTime);
         }
 
-        public void update(double currentTime) {
+        public void Update(double currentTime) {
             if (State != AnimationState.InProgress) {
                 return;
             }
@@ -55,7 +55,7 @@ namespace BombermanGame {
             }
         }
 
-        public void stop() {
+        public void Stop() {
             this.State = AnimationState.Stopped;
             this.CurrentFrame = spriteSequence[0];
         }

@@ -3,8 +3,6 @@
 namespace BombermanGame {
     class Block : FixedMapObject {
         static private Bitmap sprite = new Bitmap(Properties.Resources.block, Game.boxSize);
-        
-        public void destroy() { }
 
         public override void Draw(Graphics g) {
             g.DrawImage(sprite, this.mapTile.Bounds.Location);

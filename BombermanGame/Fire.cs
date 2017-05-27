@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Drawing;
-using System.Timers;
+﻿using System.Drawing;
 
 namespace BombermanGame
 {
@@ -15,12 +9,12 @@ namespace BombermanGame
         private Animation spriteAnimation;
 
         public Fire(FireType direction, double startTime) : base(destructible: false) {
-            spriteAnimation = FireAnimations.getFireAnimation(direction, 1);
-            spriteAnimation.start(startTime);
+            spriteAnimation = FireAnimations.GetFireAnimation(direction, 1);
+            spriteAnimation.Start(startTime);
         }
 
         public override void Update(double totalTime) {
-            spriteAnimation.update(totalTime);
+            spriteAnimation.Update(totalTime);
             this.mapTile?.MarkAsDirty();
             if (spriteAnimation.State == AnimationState.Stopped) {
                 this.mapTile.Object = null;

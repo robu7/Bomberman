@@ -8,19 +8,19 @@ namespace BombermanGame {
 
         // Used to only extract sprites from the original resources once
         private static readonly IReadOnlyDictionary<FireType, IReadOnlyList<Bitmap>> sprites = new Dictionary<FireType, IReadOnlyList<Bitmap>> {
-            { FireType.Left, buildSpriteSequence(Properties.Resources.ExplosionLeft) },
-            { FireType.Right, buildSpriteSequence(Properties.Resources.ExplosionRight) },
-            { FireType.Up, buildSpriteSequence(Properties.Resources.ExplosionUp) },
-            { FireType.Down, buildSpriteSequence(Properties.Resources.ExplosionDown) },
-            { FireType.Horizontal, buildSpriteSequence(Properties.Resources.ExplosionHorizontal) },
-            { FireType.Vertical, buildSpriteSequence(Properties.Resources.ExplosionVertical) },
-            { FireType.Center, buildSpriteSequence(Properties.Resources.ExplosionCentre) },
+            { FireType.Left, BuildSpriteSequence(Properties.Resources.ExplosionLeft) },
+            { FireType.Right, BuildSpriteSequence(Properties.Resources.ExplosionRight) },
+            { FireType.Up, BuildSpriteSequence(Properties.Resources.ExplosionUp) },
+            { FireType.Down, BuildSpriteSequence(Properties.Resources.ExplosionDown) },
+            { FireType.Horizontal, BuildSpriteSequence(Properties.Resources.ExplosionHorizontal) },
+            { FireType.Vertical, BuildSpriteSequence(Properties.Resources.ExplosionVertical) },
+            { FireType.Center, BuildSpriteSequence(Properties.Resources.ExplosionCentre) },
         };
 
         /// <summary>
         /// Crops out sprites from an image containing the whole animation sequence
         /// </summary>
-        private static List<Bitmap> buildSpriteSequence(Bitmap original) {
+        private static List<Bitmap> BuildSpriteSequence(Bitmap original) {
             Rectangle srcRect;
             List<Bitmap> sequence = new List<Bitmap>();
             for (int i = 0; i < 7; ++i) {
@@ -33,7 +33,7 @@ namespace BombermanGame {
         /// <summary>
         /// Returns the appropriate animation for the specified part of an explosion fire
         /// </summary>
-        public static Animation getFireAnimation(FireType direction, double animationDuration) {
+        public static Animation GetFireAnimation(FireType direction, double animationDuration) {
             // Get pre-generated sprites
             IReadOnlyList<Bitmap> spriteSequence;
             if (!sprites.TryGetValue(direction, out spriteSequence)) {

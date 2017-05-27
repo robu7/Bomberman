@@ -38,16 +38,16 @@ namespace BombermanGame
 
             this.mapTile.Object = new Fire(FireType.Center, currentTime);
             
-            explodeInDirection(Game.Direction.North, FireType.Up, currentTime);
-            explodeInDirection(Game.Direction.South, FireType.Down, currentTime);
-            explodeInDirection(Game.Direction.West, FireType.Left, currentTime);
-            explodeInDirection(Game.Direction.East, FireType.Right, currentTime);
+            ExplodeInDirection(Game.Direction.North, FireType.Up, currentTime);
+            ExplodeInDirection(Game.Direction.South, FireType.Down, currentTime);
+            ExplodeInDirection(Game.Direction.West, FireType.Left, currentTime);
+            ExplodeInDirection(Game.Direction.East, FireType.Right, currentTime);
 
             HasExploded = true;
             this.owner.BombCap++;
         }
         
-        private void explodeInDirection(Game.Direction direction, FireType fireType, double currentTime) {
+        private void ExplodeInDirection(Game.Direction direction, FireType fireType, double currentTime) {
             FireType connectionType = (fireType == FireType.Up || fireType == FireType.Down) ? FireType.Vertical : FireType.Horizontal;
 
             var remainingRange = this.range;

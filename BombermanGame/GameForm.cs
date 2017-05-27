@@ -1,13 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Runtime.InteropServices;
 
 namespace BombermanGame
 {
@@ -48,15 +41,12 @@ namespace BombermanGame
             communicator.StartListening();
             communicator.ActiveControl = hostGameMenu;
             hostGameMenu.AddLobbyPlayer(2, "Client");
-
-
-
-            /*
-            JoinGameMenuControl joinGameMenu = new JoinGameMenuControl();
-            MainPanel.SuspendLayout();
-            MainPanel.Controls.Clear();
-            MainPanel.Controls.Add(joinGameMenu);
-            MainPanel.ResumeLayout(false);*/
+            
+            //JoinGameMenuControl joinGameMenu = new JoinGameMenuControl();
+            //MainPanel.SuspendLayout();
+            //MainPanel.Controls.Clear();
+            //MainPanel.Controls.Add(joinGameMenu);
+            //MainPanel.ResumeLayout(false);
 
         }
 
@@ -93,9 +83,9 @@ namespace BombermanGame
         }
 
 
-        /* TODO: implement InputHandler instead
-         * Controller input is passed on to the game class
-         */
+        // TODO: implement InputHandler instead
+        // Controller input is passed on to the game class
+        //
         private void GameForm_KeyDown(object sender, KeyEventArgs e) {
             //inputHandler.buttonPressed(e.KeyCode);
             game.handleKeyDownInput(e);

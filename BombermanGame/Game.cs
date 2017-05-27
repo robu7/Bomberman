@@ -4,12 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Drawing;
-//using System.Windows.Input;
 using System.Windows.Forms;
 using System.Diagnostics;
 
 namespace BombermanGame {
-    partial class Game : NetworkReciever {
+    class Game : NetworkReciever {
         private GraphicsEngine gEngine;     // ---Graphics engine---
 
         private Map map;                    // ---Current map ---
@@ -28,15 +27,30 @@ namespace BombermanGame {
 
         private Stopwatch timer;
 
-        /*
-         * Player related 
-         */
+        //
+        // Player related 
+        //
         private Dictionary<int, Player> players;
         private Player myPlayerInstance;
         private int myID;
         public enum Direction {None, North, East, South, West};
         public List<Bomb> bombList;
 
+        //
+        // Time variables to ensure even game flow
+        //
+        private double newTime;
+        private double timeUntilNextFrame;
+        private double currentTime = 0;
+
+        //
+        // Size values to game
+        //
+        public const float mapHeight = 1100;
+        public const float mapWidth = 1100;
+        public const float tileSize = 1100 / 11;
+
+        static public Size boxSize = new Size((int)tileSize, (int)tileSize);
 
         public void HandleCommand<T>(T command) {
             Console.WriteLine("Recieved message: {0}", typeof(T).Name);
@@ -59,24 +73,24 @@ namespace BombermanGame {
             readySignal.Set();
         }
 
-        /*
-         * Default contructor
-         */
-        public Game(Graphics panelGraphics, InputHandler _inputHandler, Communicator _communicationHandler) {
-            communicationHandler = _communicationHandler;
-            inputHandler = _inputHandler;
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public Game(Graphics panelGraphics, InputHandler inputHandler, Communicator communicationHandler) {
+            this.communicationHandler = communicationHandler;
+            this.inputHandler = inputHandler;
 
-            communicationHandler.ActiveControl = this;
+            this.communicationHandler.ActiveControl = this;
             objectsInMotion = new List<FloatingObject>();
 
             map = Map.CreateDefault();
             players = new Dictionary<int, Player>();
             networkCommands = new List<Task>();
-            myID = _communicationHandler.PeerID;
+            myID = communicationHandler.PeerID;
             players.Add(myID, new Player(map.GetTileAt(new PointF(100, 100))));
             myPlayerInstance = players[myID];
 
-            foreach (var peer in _communicationHandler.PeerList) {
+            foreach (var peer in communicationHandler.PeerList) {
                 players.Add(peer.Key, new Player(map.GetTileAt(new PointF(100, 100))));
                 Console.WriteLine("Added player: {0}", peer.Key);
             }
@@ -99,7 +113,6 @@ namespace BombermanGame {
             //themeMusic.Play();
 
             GameThread.Start();
-            //gEngine.startRendering();
         }
 
         /// <summary>
@@ -172,15 +185,15 @@ namespace BombermanGame {
                 //
                 // Step 6: Draw current game state
                 //
-                gEngine.draw();
+                gEngine.Draw();
                 //communicationHandler.Broadcast(PacketBuilder.Build_Ready(myID));
                 //readySignal.WaitOne();
             }
         }
 
-        /*
-        * Functions to handle input from user
-        */
+        /// <summary>
+        /// Functions to handle input from user
+        /// </summary>
         public void handleKeyDownInput(KeyEventArgs keyBoardInput) {
             inputHandler.buttonPressed(keyBoardInput.KeyCode);          
         }
@@ -196,8 +209,9 @@ namespace BombermanGame {
         private void startPlayerMovement(PlayerMovement newMove) {
             updatePlayerMovement(players[newMove.PeerID], newMove.MoveDirection);
         }
-        private void stopPlayerMovement(Player player, Direction dir) {
 
+        public void stopGame() {
+            this.GameThread.Abort();
         }
     }
 }

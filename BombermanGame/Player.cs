@@ -24,14 +24,14 @@ namespace BombermanGame
         public int BombRange { get; set; }
 
         public bool isAlive() { return alive; }
-        public bool shouldDraw() { return draw; }
+        public bool ShouldDraw() { return draw; }
         private void stopDrawing() { draw = false; }
 
         public void startAnimating(Game.Direction direction, double currentTime) {
             this.spriteAnimation = PlayerAnimations.GetWalkAnimation(direction, 0.6);
-            this.spriteAnimation.start(currentTime);
+            this.spriteAnimation.Start(currentTime);
         }
-        public void stopAnimating() { spriteAnimation.stop(); }
+        public void stopAnimating() { spriteAnimation.Stop(); }
 
         private Tile debugNextTile;
         public override void Update(double currentTime) {
@@ -88,7 +88,7 @@ namespace BombermanGame
 
             InteractWithTileContent(this.currentTile);
 
-            spriteAnimation?.update(currentTime);
+            spriteAnimation?.Update(currentTime);
             this.lastUpdateTime = currentTime;
         }
 

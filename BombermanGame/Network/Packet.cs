@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
-using System.Threading.Tasks;
-using System.Drawing;
 
 
 namespace BombermanGame
@@ -17,11 +15,7 @@ namespace BombermanGame
         void HandleCommand<T>(T command);
         void ReadySignal(int peerID);
     }
-
-
-    /*
-     * 
-     */
+    
     public class HostResponse
     {
         int assignedID;
@@ -35,11 +29,7 @@ namespace BombermanGame
         }
 
     }
-
-
-    /*
-     * 
-     */
+    
     public class ChatMessage
     {
         string message;
@@ -59,11 +49,7 @@ namespace BombermanGame
             this.message = message;
         }
     }
-
-
-    /*
-     * 
-     */
+    
     public class ConnectMessage
     {
         int peerID;
@@ -76,11 +62,7 @@ namespace BombermanGame
             peerName = name;
         }
     }
-
-
-    /*
-     * 
-     */
+    
     public class NewPeer
     {
         int peerID;
@@ -129,9 +111,9 @@ namespace BombermanGame
             return data.ToArray();
         }
 
-        /*
-         * Builds message that contain sender ID and message string
-         */
+        /// <summary>
+        /// Builds message that contain sender ID and message string
+        /// </summary>
         static public byte[] Build_ChatMessage(string message) {
             List<byte> data = new List<byte>();
             data.AddRange(BitConverter.GetBytes((int)MessageType.ChatMessage));
@@ -140,10 +122,10 @@ namespace BombermanGame
             return data.ToArray();
         }
 
-        /*
-         * Message that the host sends when a new peer has connected to the game,
-         * contains new peer ID and address which to connect
-         */
+        /// <summary>
+        /// Message that the host sends when a new peer has connected to the game,
+        /// contains new peer ID and address which to connect
+        /// </summary>
         static public byte[] Build_NewConnectedPeer(PlayerInfo newPeer) {
             List<byte> data = new List<byte>();
             data.AddRange(BitConverter.GetBytes((int)MessageType.NewPeer));
@@ -153,11 +135,11 @@ namespace BombermanGame
             data.AddRange(address);
             return data.ToArray();
         }
-
-        /*
-         * Initial message when a peer connects to another peer,
-         * contains sender peer ID and address which to connect
-         */
+        
+        /// <summary>
+        /// Initial message when a peer connects to another peer,
+        /// contains sender peer ID and address which to connect
+        /// </summary>
         static public byte[] Build_ConnectMessage(int myID, string name) {
             List<byte> data = new List<byte>();
             data.AddRange(BitConverter.GetBytes((int)MessageType.ConnectMessage));
@@ -167,11 +149,11 @@ namespace BombermanGame
             return data.ToArray();
         }
 
-        /*
-         * Player movement replication,
-         * contains sender peer ID and movement directon
-         */
-         static public byte[] Build_PlayerMovement(int myID, Game.Direction direction) {
+        /// <summary>
+        /// Player movement replication,
+        /// contains sender peer ID and movement directon
+        /// </summary>
+        static public byte[] Build_PlayerMovement(int myID, Game.Direction direction) {
             List<byte> data = new List<byte>();
             data.AddRange(BitConverter.GetBytes((int)MessageType.PlayerMovement));
             data.AddRange(BitConverter.GetBytes(myID));
@@ -179,21 +161,21 @@ namespace BombermanGame
             return data.ToArray();
         }
 
-        /*
-        * Ready signal,
-        * contains sender peer ID
-        */
+        /// <summary>
+        /// Ready signal,
+        /// contains sender peer ID
+        /// </summary>
         static public byte[] Build_Ready(int myID) {
             List<byte> data = new List<byte>();
             data.AddRange(BitConverter.GetBytes((int)MessageType.Ready));
             data.AddRange(BitConverter.GetBytes(myID));
             return data.ToArray();
         }
-
-        /*
-        * Deploy bomb message,
-        * contains sender peer ID
-        */
+        
+        /// <summary>
+        /// Deploy bomb message,
+        /// contains sender peer ID
+        /// </summary>
         static public byte[] Build_DeployBomb(int myID) {
             List<byte> data = new List<byte>();
             data.AddRange(BitConverter.GetBytes((int)MessageType.DeployBomb));
@@ -213,57 +195,38 @@ namespace BombermanGame
             string hostName = (Encoding.ASCII.GetString(data, 12, nameLenght));
             return new HostResponse(id, hostName);
         }
-
-
-        /*
-         * 
-         */      
+  
         static public ChatMessage Decode_ChatMessage(byte[] data) {
             int messageLength = BitConverter.ToInt32(data, 4);
             string message = (Encoding.ASCII.GetString(data, 8, messageLength));
             return new ChatMessage(message);
         }
-
-        /*
-         * 
-         */
+        
         static public ConnectMessage Decode_ConnectMessage(byte[] data) {
             int peerID = BitConverter.ToInt32(data, 4);
             int nameLenght = BitConverter.ToInt32(data, 8);
             string peerName = (Encoding.ASCII.GetString(data, 12, nameLenght));
             return new ConnectMessage(peerID, peerName);
         }
-
-        /*
-         * 
-         */
+        
         static public NewPeer Decode_NewConnectedPeer(byte[] data) {
             int peerID = BitConverter.ToInt32(data, 4);
             int addressLength = BitConverter.ToInt32(data, 8);
             IPAddress peerAddress = new IPAddress(data.Skip(12).Take(addressLength).ToArray());
             return new NewPeer(peerID, peerAddress);
         }
-
-        /*
-        * 
-        */
+        
         static public PlayerMovement Decode_PlayerMovement(byte[] data) {
             int peerID = BitConverter.ToInt32(data, 4);
             Game.Direction dir = (Game.Direction)BitConverter.ToInt32(data, 8);
             return new PlayerMovement(peerID, dir);
         }
-
-        /*
-        * 
-        */
+        
         static public int Decode_Ready(byte[] data) {
             int peerID = BitConverter.ToInt32(data, 4);
             return peerID;
         }
-
-        /*
-        * 
-        */
+        
         static public DeployBomb Decode_DeployBomb(byte[] data) {
             int peerID = BitConverter.ToInt32(data, 4);
             return new DeployBomb(peerID);

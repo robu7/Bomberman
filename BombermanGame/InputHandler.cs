@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
-using System.Windows;
-//using System.Windows.Input;
 using System.Windows.Forms;
 
 namespace BombermanGame
@@ -28,11 +22,10 @@ namespace BombermanGame
             //Keyboard.KeyDownEvent += buttonPressed;
         }
 
-
-        /*
-         * This function will check for new inpout and return true is this is the case,
-         * otherwise return false;
-         */
+        /// <summary>
+        /// This function will check for new inpout and return true is this is the case,
+        /// otherwise return false.
+        /// </summary>
         public bool handleInput() {
             return false;
         }

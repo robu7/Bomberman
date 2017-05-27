@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Net.Sockets;
 using System.Net;
-using System.Threading;
-
 
 namespace BombermanGame
 {
@@ -43,32 +39,29 @@ namespace BombermanGame
             Console.WriteLine("Constructor Communicator");
             //activeControl = gameform;
         }
-
-
-        /*
-         * Broadcast chat message to all connected peers
-         */
+        
+        /// <summary>
+        /// Broadcast chat message to all connected peers
+        /// </summary>
         public void SendChatMessage(string message) {
             byte[] data = PacketBuilder.Build_ChatMessage(message);
             foreach (var peer in peerList.Values) {
                 peer.Socket.BeginSend(data,0,data.Length,0,SendCallback, peer.Socket);
             }
         }
-
-
-        /*
-         * Broadcast specified message to all connected peers
-         */
+        
+        /// <summary>
+        /// Broadcast specified message to all connected peers
+        /// </summary>
         public void Broadcast(byte[] data) {
             foreach (var peer in peerList.Values) {
                 peer.Socket.BeginSend(data, 0, data.Length, 0, SendCallback, peer.Socket);
             }
         }
 
-
-        /*
-         * Connect to server with the specified properties
-         */
+        /// <summary>
+        /// Connect to server with the specified properties
+        /// </summary>
         public void Connect(IPAddress connectAddress = null) {
             if (connectAddress == null) {
                 IPHostEntry ipHostInfo = Dns.Resolve(Dns.GetHostName());
@@ -89,11 +82,10 @@ namespace BombermanGame
             }
 
         }
-
-
-        /*
-        * Connect to server with the specified properties
-        */
+        
+        /// <summary>
+        /// Connect to server with the specified properties
+        /// </summary>
         public void StartListening() {
             IPHostEntry ipHostInfo = Dns.Resolve(Dns.GetHostName());
             //Dns.GetHostEntry(Dns.GetHostName());
@@ -117,10 +109,9 @@ namespace BombermanGame
             }
         }
 
-
-        /*
-         * Accept a connection attempt 
-         */
+        /// <summary>
+        /// Accept a connection attempt
+        /// </summary>
         private void AcceptCallback(IAsyncResult ar) {
             try {
                 Socket listener = (Socket)ar.AsyncState;
