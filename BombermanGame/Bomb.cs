@@ -4,7 +4,7 @@ namespace BombermanGame
 {
     class Bomb : FixedMapObject {
         
-        private static Bitmap sprite = new Bitmap(Properties.Resources.bomb, Game.boxSize);
+        private static SharpDX.Direct2D1.Bitmap sprite;
 
         private Player owner;
         private double creationTime;
@@ -16,6 +16,10 @@ namespace BombermanGame
             this.owner = owner;
             this.creationTime = creationTime;
             this.range = owner.BombRange;
+        }
+
+        public static void LoadGraphics(SharpDX.Direct2D1.RenderTarget target) {
+            sprite = Properties.Resources.bomb.CreateDirectX2D1Bitmap(target);
         }
 
         protected override void OnDestroy(double currentTime) {
@@ -77,8 +81,9 @@ namespace BombermanGame
             }
         }
 
-        public override void Draw(Graphics g) {
-            g.DrawImage(sprite, this.mapTile.Bounds.Location);
+        public override void Draw(SharpDX.Direct2D1.RenderTarget target) {
+            var b = this.mapTile.Bounds;
+            target.DrawBitmap(sprite, new SharpDX.Mathematics.Interop.RawRectangleF(b.Left, b.Top, b.Right, b.Bottom), 1, SharpDX.Direct2D1.BitmapInterpolationMode.Linear);
         }
 
         public override string ToString() {

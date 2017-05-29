@@ -53,14 +53,14 @@ namespace BombermanGame {
             }
         }
 
-        public void Draw(Graphics g) {
+        public void Draw(SharpDX.Direct2D1.RenderTarget target) {
             foreach (var tile in this.tiles) {
                 if (!tile.IsChanged) {
                     // The content within the tile has not changed
                     continue;
                 }
                 // Tile has been updated, redraw
-                tile.Draw(g);
+                tile.Draw(target);
             }
         }
 
@@ -82,7 +82,7 @@ namespace BombermanGame {
             objects[1, 2] = null;
             objects[1, 3] = null;
             objects[2, 1] = null;
-            objects[3, 1] = new Powerup(PowerUpType.RangeBoost, 0);
+            objects[3, 1] = new BombRangePowerup(0);
 
             return new Map(objects);
         }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Drawing;
 using System.Windows.Forms;
 
 namespace BombermanGame
@@ -10,7 +9,6 @@ namespace BombermanGame
         InputHandler inputHandler;
         Communicator communicator;
         HostGameMenuControl hostGameMenu;
-
 
         public GameForm() {
             InitializeComponent();
@@ -23,8 +21,8 @@ namespace BombermanGame
             MessageBox.Show(message, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
-        public void StartGame(Graphics gameGraphics) {
-            game = new Game(gameGraphics, inputHandler, communicator);
+        public void StartGame(Control gamePanel) {
+            game = new Game(gamePanel, inputHandler, communicator);
             KeyPreview = true;
         }
 

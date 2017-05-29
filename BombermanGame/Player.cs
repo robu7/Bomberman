@@ -13,11 +13,14 @@ namespace BombermanGame
         private Animation spriteAnimation;
 
         public Player(Tile startTile) : base(startTile, Game.boxSize) {
-            spriteAnimation = PlayerAnimations.GetWalkAnimation(Game.Direction.South, 0.6);
             draw = true;
             alive = true;
             BombCap = 4;
             BombRange = 1;
+        }
+
+        public void Init() {
+            spriteAnimation = PlayerAnimations.GetWalkAnimation(Game.Direction.South, 0.6);
         }
 
         public int BombCap { get; set; }
@@ -132,23 +135,17 @@ namespace BombermanGame
             if (tileObject is Fire) {
                 destroy();
             } else if (tileObject is Powerup) {
-                (tileObject as Powerup).ApplyToPlayer(this);
+                (tileObject as Powerup).ApplyAndConsume(this);
             }
         }
 
-        public override void Draw(Graphics g) {
+        public override void Draw(SharpDX.Direct2D1.RenderTarget target) {
             var sprite = this.spriteAnimation?.CurrentFrame;
             if (sprite == null) {
                 return;
             }
-            // Uncomment for debug printing of player updates
-            //g.FillRectangle(Brushes.CornflowerBlue, this.currentTile.Bounds);
-            //if (this.debugNextTile != null) {
-            //    g.FillRectangle(Brushes.OrangeRed, this.debugNextTile.Bounds);
-            //}
-            g.DrawImage(sprite, this.bounds.Location);
-            //g.DrawRectangle(Pens.Coral, (int)this.bounds.Left, (int)this.bounds.Top, (int)this.bounds.Width, (int)this.bounds.Height);
-            //g.FillRectangle(Brushes.GreenYellow, new RectangleF(this.centerPosition.X - 5, this.centerPosition.Y - 5, 10, 10));
+            var b = this.bounds;
+            target.DrawBitmap(sprite, new SharpDX.Mathematics.Interop.RawRectangleF(b.Left, b.Top, b.Right, b.Bottom), 1, SharpDX.Direct2D1.BitmapInterpolationMode.Linear);
         }
 
         public void updateMovement(Game.Direction updatedDirection, double currentTime) {
