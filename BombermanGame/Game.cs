@@ -10,7 +10,7 @@ using System.Diagnostics;
 namespace BombermanGame {
     class Game : NetworkReciever {
         private GraphicsEngine gEngine;     // ---Graphics engine---
-
+        
         private Map map;                    // ---Current map ---
 
         private Thread GameThread;          // ---Game loop thread---
@@ -76,7 +76,7 @@ namespace BombermanGame {
         /// <summary>
         /// Constructor
         /// </summary>
-        public Game(Graphics panelGraphics, InputHandler inputHandler, Communicator communicationHandler) {
+        public Game(Control gamePanel/*Graphics panelGraphics*/, InputHandler inputHandler, Communicator communicationHandler) {
             this.communicationHandler = communicationHandler;
             this.inputHandler = inputHandler;
 
@@ -98,14 +98,16 @@ namespace BombermanGame {
             //player1 = new Player(new PointF(100, 100));
 
             readySignal = new ManualResetEvent(false);
-            gEngine = new GraphicsEngine(panelGraphics, players.Values.ToList(), map);
+            gEngine = new GraphicsEngine(gamePanel, players.Values.ToList(), map);
 
+            foreach (var p in players.Values) {
+                p.Init();
+            }
             bombList = new List<Bomb>();
             //objectsInMotion.Add(player1);
             timer = new Stopwatch();
 
             GameThread = new Thread(new ThreadStart(GameLoop));
-
 
             //SoundPlayer themeMusic = new SoundPlayer(@"C:\Users\Robin\Pictures\theme.wav");
             // Ska flyttas
@@ -135,7 +137,7 @@ namespace BombermanGame {
                 newTime = ((double)timer.ElapsedMilliseconds) / 1000;
                 timeUntilNextFrame = newTime - currentTime;
                 currentTime = newTime;
-
+                
                 while (timeUntilNextFrame > 0.0) {
                     delta = Math.Min(timeUntilNextFrame, dt);
 

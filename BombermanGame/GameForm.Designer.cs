@@ -38,7 +38,7 @@
             this.MainPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.MainPanel.Location = new System.Drawing.Point(0, 0);
             this.MainPanel.Name = "MainPanel";
-            this.MainPanel.Size = new System.Drawing.Size(1100, 1054);
+            this.MainPanel.Size = new System.Drawing.Size(1100, 1053);
             this.MainPanel.TabIndex = 0;
             // 
             // JoinButton
@@ -65,7 +65,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1100, 1054);
+            this.ClientSize = new System.Drawing.Size(1100, 1053);
             this.Controls.Add(this.MainPanel);
             this.Name = "GameForm";
             this.Text = "Bomberman";

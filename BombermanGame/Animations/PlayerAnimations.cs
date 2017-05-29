@@ -4,18 +4,18 @@ using System.Drawing;
 
 namespace BombermanGame.Animations {
     static class PlayerAnimations {
-        static private List<Bitmap> up;
-        static private List<Bitmap> down;
-        static private List<Bitmap> left;
-        static private List<Bitmap> right;
-        static private List<Bitmap> death;
+        static private List<SharpDX.Direct2D1.Bitmap> up;
+        static private List<SharpDX.Direct2D1.Bitmap> down;
+        static private List<SharpDX.Direct2D1.Bitmap> left;
+        static private List<SharpDX.Direct2D1.Bitmap> right;
+        static private List<SharpDX.Direct2D1.Bitmap> death;
 
-        static PlayerAnimations() {
-            up = new List<Bitmap>();
-            down = new List<Bitmap>();
-            left = new List<Bitmap>();
-            right = new List<Bitmap>();
-            death = new List<Bitmap>();
+        public static void LoadGraphics(SharpDX.Direct2D1.RenderTarget target) {
+            up = new List<SharpDX.Direct2D1.Bitmap>();
+            down = new List<SharpDX.Direct2D1.Bitmap>();
+            left = new List<SharpDX.Direct2D1.Bitmap>();
+            right = new List<SharpDX.Direct2D1.Bitmap>();
+            death = new List<SharpDX.Direct2D1.Bitmap>();
 
             Bitmap original = Properties.Resources.blue;
             Bitmap sprite;
@@ -25,40 +25,40 @@ namespace BombermanGame.Animations {
             int i = 0;
             for (; i < 3; ++i) {
                 srcRect = new Rectangle(i * 48, 0, 48, 48);
-                sprite = (Bitmap)original.Clone(srcRect, original.PixelFormat);
-                down.Add(new Bitmap(sprite, Game.boxSize));
+                sprite = original.Clone(srcRect, original.PixelFormat);
+                down.Add(sprite.CreateDirectX2D1Bitmap(target));
                 sprite.Dispose();
             }
 
             // Init right
             for (; i < 6; ++i) {
                 srcRect = new Rectangle(i * 48, 0, 48, 48);
-                sprite = (Bitmap)original.Clone(srcRect, original.PixelFormat);
-                right.Add(new Bitmap(sprite, Game.boxSize));
+                sprite = original.Clone(srcRect, original.PixelFormat);
+                right.Add(sprite.CreateDirectX2D1Bitmap(target));
                 sprite.Dispose();
             }
 
             // Init left
             for (; i < 9; ++i) {
                 srcRect = new Rectangle(i * 48, 0, 48, 48);
-                sprite = (Bitmap)original.Clone(srcRect, original.PixelFormat);
-                left.Add(new Bitmap(sprite, Game.boxSize));
+                sprite = original.Clone(srcRect, original.PixelFormat);
+                left.Add(sprite.CreateDirectX2D1Bitmap(target));
                 sprite.Dispose();
             }
 
             // Init up
             for (; i < 12; ++i) {
                 srcRect = new Rectangle(i * 48, 0, 48, 48);
-                sprite = (Bitmap)original.Clone(srcRect, original.PixelFormat);
-                up.Add(new Bitmap(sprite, Game.boxSize));
+                sprite = original.Clone(srcRect, original.PixelFormat);
+                up.Add(sprite.CreateDirectX2D1Bitmap(target));
                 sprite.Dispose();
             }
 
             // Init death
             for (; i < 20; ++i) {
                 srcRect = new Rectangle(i * 48, 0, 48, 48);
-                sprite = (Bitmap)original.Clone(srcRect, original.PixelFormat);
-                death.Add(new Bitmap(sprite, Game.boxSize));
+                sprite = original.Clone(srcRect, original.PixelFormat);
+                death.Add(sprite.CreateDirectX2D1Bitmap(target));
                 sprite.Dispose();
             }
         }
@@ -68,7 +68,7 @@ namespace BombermanGame.Animations {
         /// </summary>
         public static Animation GetWalkAnimation(Game.Direction walkDirection, double animationDuration) {
             // Get pre-generated sprites
-            IReadOnlyList<Bitmap> spriteSequence = null;
+            IReadOnlyList<SharpDX.Direct2D1.Bitmap> spriteSequence = null;
             switch (walkDirection) {
                 case Game.Direction.North:
                     spriteSequence = up;

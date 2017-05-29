@@ -22,14 +22,12 @@ namespace BombermanGame
             }
         }
 
-        public override void Draw(Graphics g) {
+        public override void Draw(SharpDX.Direct2D1.RenderTarget target) {
             if (this.spriteAnimation.CurrentFrame == null) {
                 return;
             }
-            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
-            var oversizedBounds = this.mapTile.Bounds;
-            oversizedBounds.Inflate(1, 1);
-            g.DrawImage(this.spriteAnimation.CurrentFrame, oversizedBounds);
+            var b = this.mapTile.Bounds;
+            target.DrawBitmap(this.spriteAnimation.CurrentFrame, new SharpDX.Mathematics.Interop.RawRectangleF(b.Left, b.Top, b.Right, b.Bottom), 1, SharpDX.Direct2D1.BitmapInterpolationMode.Linear);
         }
 
         public override string ToString() {

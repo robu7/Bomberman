@@ -25,7 +25,7 @@ namespace BombermanGame
 
             //communicator.StopListening();
             GamePanel.Show();
-            ((GameForm)this.ParentForm).StartGame(GamePanel.CreateGraphics());
+            ((GameForm)this.ParentForm).StartGame(GamePanel);
 
         }
 

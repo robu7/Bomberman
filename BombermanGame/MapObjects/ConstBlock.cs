@@ -1,14 +1,19 @@
-﻿using System.Drawing;
+﻿using SharpDX.Direct2D1;
 
 namespace BombermanGame {
     class ConstBlock : FixedMapObject {
 
-        private static Bitmap sprite = new Bitmap(Properties.Resources.constblock, Game.boxSize);
+        private static Bitmap sprite;
+
+        public static void LoadGraphics(SharpDX.Direct2D1.RenderTarget target) {
+            sprite = Properties.Resources.constblock.CreateDirectX2D1Bitmap(target);
+        }
 
         public ConstBlock() : base(destructible: false) { }
 
-        public override void Draw(Graphics g) {
-            g.DrawImage(sprite, this.mapTile.Bounds.Location);
+        public override void Draw(RenderTarget target) {
+            var b = this.mapTile.Bounds;
+            target.DrawBitmap(sprite, new SharpDX.Mathematics.Interop.RawRectangleF(b.Left, b.Top, b.Right, b.Bottom), 1, SharpDX.Direct2D1.BitmapInterpolationMode.Linear);
         }
 
         public override void Update(double totalTime) {

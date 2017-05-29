@@ -1,6 +1,6 @@
-﻿using System;
+﻿using SharpDX.Direct2D1;
+using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 
 namespace BombermanGame {

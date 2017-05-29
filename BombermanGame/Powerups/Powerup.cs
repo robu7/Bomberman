@@ -1,32 +1,16 @@
-﻿using System.Drawing;
+﻿using SharpDX.Direct2D1;
 
 namespace BombermanGame.Powerups
 {
-    enum PowerUpType { ExtraBomb, RangeBoost, KickAbility }
-
-    class Powerup : FixedMapObject
+    abstract class Powerup : FixedMapObject
     {
-        private Bitmap sprite;
-        public PowerUpType Type { get; set; }
+        protected abstract Bitmap Sprite { get; }
         public double CreationTime { get; }
         public double TimeToLive { get; private set; }
 
-        public Powerup(PowerUpType type, double creationTime) {
-            Type = type;
+        public Powerup(double creationTime) {
             CreationTime = creationTime;
             TimeToLive = 5;
-
-            switch (type) {
-                case PowerUpType.RangeBoost:
-                    sprite = new Bitmap(Properties.Resources.fire, Game.boxSize);
-                    break;
-                case PowerUpType.ExtraBomb:
-                    sprite = new Bitmap(Properties.Resources.bomb, Game.boxSize);
-                    break;
-                case PowerUpType.KickAbility:
-                    sprite = new Bitmap(Properties.Resources.PlayerSprite, Game.boxSize);
-                    break;
-            }
         }
 
         public override void Update(double totalTime) {
@@ -37,18 +21,18 @@ namespace BombermanGame.Powerups
             }
         }
 
-        public override void Draw(Graphics g) {
-            g.DrawImage(this.sprite, this.mapTile.Bounds.Location);
+        public override void Draw(RenderTarget target) {
+            if (Sprite == null) { return; }
+            var b = this.mapTile.Bounds;
+            target.DrawBitmap(Sprite, new SharpDX.Mathematics.Interop.RawRectangleF(b.Left, b.Top, b.Right, b.Bottom), 1, SharpDX.Direct2D1.BitmapInterpolationMode.Linear);
         }
 
-        public void ApplyToPlayer(Player player) {
-            switch (Type) {
-                case PowerUpType.RangeBoost:
-                    player.BombRange += 1;
-                    break;
-            }
+        public void ApplyAndConsume(Player player) {
+            ApplyToPlayer(player);
             this.mapTile.Object = null;
             this.mapTile = null;
         }
+
+        protected abstract void ApplyToPlayer(Player player);
     }
 }

@@ -31,7 +31,7 @@ namespace BombermanGame {
         }
 
         public abstract void Update(double totalTime);
-        public abstract void Draw(Graphics g);
+        public abstract void Draw(SharpDX.Direct2D1.RenderTarget target);
     }
 
     /// <summary>
@@ -57,7 +57,7 @@ namespace BombermanGame {
         }
 
         public abstract void Update(double totalTime);
-        public abstract void Draw(Graphics g);
+        public abstract void Draw(SharpDX.Direct2D1.RenderTarget target);
 
         public PointF Velocity { get; set; }
         public Game.Direction Direction { get; set; }

@@ -34,7 +34,7 @@
             this.StartGame = new System.Windows.Forms.Button();
             this.PlayerList = new System.Windows.Forms.ListBox();
             this.PlayerLabel = new System.Windows.Forms.Label();
-            this.GamePanel = new System.Windows.Forms.Panel();
+            this.GamePanel = new SharpDX.Windows.RenderControl();
             this.PortLabel = new System.Windows.Forms.Label();
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.IpLabel = new System.Windows.Forms.Label();
@@ -176,7 +176,7 @@
 
         private System.Windows.Forms.Panel ServerPanel;
         private System.Windows.Forms.Button StartGame;
-        private System.Windows.Forms.Panel GamePanel;
+        private SharpDX.Windows.RenderControl GamePanel;
         private System.Windows.Forms.ListBox ChatWindow;
         private System.Windows.Forms.TextBox ChatText;
         private System.Windows.Forms.Label PlayerLabel;

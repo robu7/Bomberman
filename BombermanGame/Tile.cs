@@ -3,7 +3,7 @@
 namespace BombermanGame {
 
     /// <summary>
-    /// Represents a tile on the map. It provides bounds and accessors to it's neighbors.
+    /// Represents a tile on the map. It provides bounds and accessors to its neighbors.
     /// It may or may not contain an object.
     /// </summary>
     class Tile {
@@ -84,11 +84,11 @@ namespace BombermanGame {
             }
         }
 
-        public void Draw(Graphics g) {
-            g.SetClip(this.bounds);
-            Ground.Draw(g, this.bounds.Location);
-            this.containedObject?.Draw(g);
-            g.ResetClip();
+        public void Draw(SharpDX.Direct2D1.RenderTarget target) {
+            target.PushAxisAlignedClip(new SharpDX.Mathematics.Interop.RawRectangleF(this.bounds.Left, this.bounds.Top, this.bounds.Right, this.bounds.Bottom), SharpDX.Direct2D1.AntialiasMode.PerPrimitive);
+            Ground.Draw(target, this.bounds);
+            this.containedObject?.Draw(target);
+            target.PopAxisAlignedClip();
             IsChanged = false;
         }
     }

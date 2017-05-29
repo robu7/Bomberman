@@ -7,25 +7,29 @@ namespace BombermanGame {
     static class FireAnimations {
 
         // Used to only extract sprites from the original resources once
-        private static readonly IReadOnlyDictionary<FireType, IReadOnlyList<Bitmap>> sprites = new Dictionary<FireType, IReadOnlyList<Bitmap>> {
-            { FireType.Left, BuildSpriteSequence(Properties.Resources.ExplosionLeft) },
-            { FireType.Right, BuildSpriteSequence(Properties.Resources.ExplosionRight) },
-            { FireType.Up, BuildSpriteSequence(Properties.Resources.ExplosionUp) },
-            { FireType.Down, BuildSpriteSequence(Properties.Resources.ExplosionDown) },
-            { FireType.Horizontal, BuildSpriteSequence(Properties.Resources.ExplosionHorizontal) },
-            { FireType.Vertical, BuildSpriteSequence(Properties.Resources.ExplosionVertical) },
-            { FireType.Center, BuildSpriteSequence(Properties.Resources.ExplosionCentre) },
-        };
+        private static IReadOnlyDictionary<FireType, IReadOnlyList<SharpDX.Direct2D1.Bitmap>> sprites;
+
+        public static void LoadGraphics(SharpDX.Direct2D1.RenderTarget target) {
+            sprites = new Dictionary<FireType, IReadOnlyList<SharpDX.Direct2D1.Bitmap>> {
+                { FireType.Left, BuildSpriteSequence(Properties.Resources.ExplosionLeft, target) },
+                { FireType.Right, BuildSpriteSequence(Properties.Resources.ExplosionRight, target) },
+                { FireType.Up, BuildSpriteSequence(Properties.Resources.ExplosionUp, target) },
+                { FireType.Down, BuildSpriteSequence(Properties.Resources.ExplosionDown, target) },
+                { FireType.Horizontal, BuildSpriteSequence(Properties.Resources.ExplosionHorizontal, target) },
+                { FireType.Vertical, BuildSpriteSequence(Properties.Resources.ExplosionVertical, target) },
+                { FireType.Center, BuildSpriteSequence(Properties.Resources.ExplosionCentre, target) },
+            };
+        }
 
         /// <summary>
         /// Crops out sprites from an image containing the whole animation sequence
         /// </summary>
-        private static List<Bitmap> BuildSpriteSequence(Bitmap original) {
+        private static List<SharpDX.Direct2D1.Bitmap> BuildSpriteSequence(Bitmap original, SharpDX.Direct2D1.RenderTarget target) {
             Rectangle srcRect;
-            List<Bitmap> sequence = new List<Bitmap>();
+            var sequence = new List<SharpDX.Direct2D1.Bitmap>();
             for (int i = 0; i < 7; ++i) {
                 srcRect = new Rectangle(i * 32, 0, 32, 32);
-                sequence.Add((Bitmap)original.Clone(srcRect, original.PixelFormat));
+                sequence.Add(original.Clone(srcRect, original.PixelFormat).CreateDirectX2D1Bitmap(target));
             }
             return sequence;
         }
@@ -35,7 +39,7 @@ namespace BombermanGame {
         /// </summary>
         public static Animation GetFireAnimation(FireType direction, double animationDuration) {
             // Get pre-generated sprites
-            IReadOnlyList<Bitmap> spriteSequence;
+            IReadOnlyList<SharpDX.Direct2D1.Bitmap> spriteSequence;
             if (!sprites.TryGetValue(direction, out spriteSequence)) {
                 throw new Exception("Unknown Fire Type: " + direction);
             }
