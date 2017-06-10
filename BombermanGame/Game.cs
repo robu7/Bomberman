@@ -146,7 +146,7 @@ namespace BombermanGame {
                     //
                     if (myPlayerInstance.isAlive()) {
                         if (inputHandler.UpdatedInput) {
-                            myPlayerInstance.updateMovement(inputHandler.PressedDirection, currentTime);
+                            myPlayerInstance.NewMovementDirection(inputHandler.PressedDirection, currentTime);
                             communicationHandler.Broadcast(PacketBuilder.Build_PlayerMovement(myID, inputHandler.PressedDirection));
                             inputHandler.UpdatedInput = false;
                         }
@@ -205,7 +205,7 @@ namespace BombermanGame {
 
         private void updatePlayerMovement(Player player, Direction moveDirection) {
             Console.WriteLine("Player: {0} started moving: {1}", players.First(x => x.Value == player).Key, moveDirection.ToString());
-            player.updateMovement(moveDirection, this.currentTime);
+            player.NewMovementDirection(moveDirection, this.currentTime);
         }
 
         private void startPlayerMovement(PlayerMovement newMove) {

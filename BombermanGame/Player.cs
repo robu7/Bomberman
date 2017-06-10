@@ -6,17 +6,18 @@ using BombermanGame.Powerups;
 
 namespace BombermanGame
 {
-    class Player : FloatingObject {
+    class Player : GameObject {
         private bool alive;
         private bool draw;
         private double lastUpdateTime;
         private Animation spriteAnimation;
 
-        public Player(Tile startTile) : base(startTile, Game.boxSize) {
+        public Player(Tile startTile) : base(startTile) {
             draw = true;
             alive = true;
             BombCap = 4;
             BombRange = 1;
+            objectMovement = new FloatingMovement(this);
         }
 
         public void Init() {
@@ -37,10 +38,12 @@ namespace BombermanGame
         public void stopAnimating() { spriteAnimation.Stop(); }
 
         private Tile debugNextTile;
-        public override void Update(double currentTime) {
+        public override void Update(double currentTime){
             var timeDelta = currentTime - this.lastUpdateTime;
-            var previousBounds = this.bounds;
+            //var previousBounds = this.bounds;
 
+            objectMovement.UpdateMovement(currentTime, timeDelta);
+            /*
             var xDelta = Velocity.X * (float)timeDelta;
             var yDelta = Velocity.Y * (float)timeDelta;
 
@@ -88,46 +91,11 @@ namespace BombermanGame
             if (!Velocity.IsEmpty) {
                 AlignWithTileBounds();
             }
-
-            InteractWithTileContent(this.currentTile);
+            */
+            InteractWithTileContent(this.mapTile);
 
             spriteAnimation?.Update(currentTime);
             this.lastUpdateTime = currentTime;
-        }
-
-        private bool CanEnterTile(Tile tileToEnter) {
-            if (tileToEnter == Tile.OutOfBounds) {
-                return false;
-            }
-
-            if (tileToEnter.Object is Block || tileToEnter.Object is ConstBlock) {
-                return false;
-            }
-
-            return true;
-        }
-
-        private void AlignWithTileBounds() {
-            switch (Direction) {
-                case Game.Direction.East:
-                case Game.Direction.West:
-                    // Adjust vertical position
-                    if (this.bounds.Top < this.currentTile.Bounds.Top) {
-                        MoveBy(0, this.currentTile.Bounds.Top - this.bounds.Top);
-                    } else if(this.bounds.Bottom > this.currentTile.Bounds.Bottom) {
-                        MoveBy(0, this.currentTile.Bounds.Bottom - this.bounds.Bottom);
-                    }
-                    break;
-                case Game.Direction.North:
-                case Game.Direction.South:
-                    // Adjust horizontal position
-                    if (this.bounds.Left < this.currentTile.Bounds.Left) {
-                        MoveBy(this.currentTile.Bounds.Left - this.bounds.Left, 0);
-                    } else if (this.bounds.Right > this.currentTile.Bounds.Right) {
-                        MoveBy(this.currentTile.Bounds.Right - this.bounds.Right, 0);
-                    }
-                    break;
-            }
         }
 
         private void InteractWithTileContent(Tile enteredTile) {
@@ -144,43 +112,43 @@ namespace BombermanGame
             if (sprite == null) {
                 return;
             }
-            var b = this.bounds;
+            var b = this.objectMovement.Bounds;
             target.DrawBitmap(sprite, new SharpDX.Mathematics.Interop.RawRectangleF(b.Left, b.Top, b.Right, b.Bottom), 1, SharpDX.Direct2D1.BitmapInterpolationMode.Linear);
         }
 
-        public void updateMovement(Game.Direction updatedDirection, double currentTime) {
-            if (updatedDirection == Direction) {
+        public void NewMovementDirection(Game.Direction newDirection, double currentTime) {
+            if (newDirection == objectMovement.Direction) {
                 // No need to update when direction is the same
                 return;
             }
 
             // Update direction
-            Direction = updatedDirection;
+            objectMovement.Direction = newDirection;
 
             // Update velocity
-            switch (updatedDirection) {
+            switch (newDirection) {
                 case Game.Direction.North:
-                    Velocity = new PointF(0, -225);
+                    objectMovement.Velocity = new PointF(0, -225);
                     break;
                 case Game.Direction.South:
-                    Velocity = new PointF(0, 225);
+                    objectMovement.Velocity = new PointF(0, 225);
                     break;
                 case Game.Direction.West:
-                    Velocity = new PointF(-225, 0);
+                    objectMovement.Velocity = new PointF(-225, 0);
                     break;
                 case Game.Direction.East:
-                    Velocity = new PointF(225, 0);
+                    objectMovement.Velocity = new PointF(225, 0);
                     break;
                 case Game.Direction.None:
-                    Velocity = new PointF(0, 0);
+                    objectMovement.Velocity = new PointF(0, 0);
                     break;
             }
 
             // Update animation
-            if (updatedDirection == Game.Direction.None) {
+            if (newDirection == Game.Direction.None) {
                 stopAnimating();
             } else {
-                startAnimating(updatedDirection, currentTime);
+                startAnimating(newDirection, currentTime);
             }
         }
 
@@ -189,7 +157,7 @@ namespace BombermanGame
             if (BombCap == 0) {
                 return;
             }
-            if (this.currentTile?.Object as Bomb != null) {
+            if (this.mapTile?.Object as Bomb != null) {
                 // There is already a bomb at this location
                 return;
             }
@@ -197,7 +165,7 @@ namespace BombermanGame
             // Preconditions ok, deploy the bomb
             BombCap--;
             Bomb newBomb = new Bomb(this, this.lastUpdateTime);
-            this.currentTile.Object = newBomb;
+            this.mapTile.Object = newBomb;
         }
 
         public void destroy() {

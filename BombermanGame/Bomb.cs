@@ -34,7 +34,7 @@ namespace BombermanGame
             }
             if (currentTime - creationTime >= timeToLive) {
                 Explode(currentTime);
-            }      
+            }
         }
 
         private void Explode(double currentTime) {
