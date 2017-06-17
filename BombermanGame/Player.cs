@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Timers;
 using BombermanGame.Animations;
 using BombermanGame.Powerups;
+using BombermanGame.MapObjects;
 
 namespace BombermanGame
 {
@@ -42,8 +43,13 @@ namespace BombermanGame
         public override void Update(double currentTime){
             var timeDelta = currentTime - this.lastUpdateTime;
 
-            this.movement.UpdateLocation(currentTime, timeDelta);
+            var status = this.movement.UpdateLocation(currentTime, timeDelta);
             
+            if(status.HaveCollided && status.CollisionObject is Bomb) {
+                (status.CollisionObject as Bomb).Kicked(this.movement.Direction);
+                Console.WriteLine("Player Kicked a Bomb");
+            }
+
             InteractWithTileContent(this.movement.CurrentTile);
 
             spriteAnimation?.Update(currentTime);

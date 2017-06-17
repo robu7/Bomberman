@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using BombermanGame.MapObjects;
 
 namespace BombermanGame {
 
@@ -37,9 +38,10 @@ namespace BombermanGame {
                     return;
                 }
                 this.containedObject = value;
-                if (this.containedObject != null) {
+                if (this.containedObject != null && !(value.LocationResolver is FloatingLocationResolver)) {
                     this.containedObject.AttachToTile(this);
                 }
+
                 MarkAsDirty();
             }
         }
@@ -87,7 +89,7 @@ namespace BombermanGame {
         public void Draw(SharpDX.Direct2D1.RenderTarget target) {
             target.PushAxisAlignedClip(new SharpDX.Mathematics.Interop.RawRectangleF(this.bounds.Left, this.bounds.Top, this.bounds.Right, this.bounds.Bottom), SharpDX.Direct2D1.AntialiasMode.PerPrimitive);
             Ground.Draw(target, this.bounds);
-            this.containedObject?.Draw(target);
+            //this.containedObject?.Draw(target);
             target.PopAxisAlignedClip();
             IsChanged = false;
         }

@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Drawing;
 using BombermanGame.Powerups;
+using BombermanGame.MapObjects;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace BombermanGame {
     class Map {
@@ -37,7 +40,7 @@ namespace BombermanGame {
             return tiles[x, y];
         }
 
-        public void Update(double totalTime) {
+        public void Update(double totalTime, double delta) {
             foreach (var tile in this.tiles) {
                 if (tile.IsChanged) {
                     // The tile has already been updated (e.g. as a side-effect of another tile update)
@@ -54,13 +57,20 @@ namespace BombermanGame {
         }
 
         public void Draw(SharpDX.Direct2D1.RenderTarget target) {
+            List<GameObject> objectsToDraw = new List<GameObject>();
             foreach (var tile in this.tiles) {
                 if (!tile.IsChanged) {
                     // The content within the tile has not changed
                     continue;
                 }
+                if(tile.Object != null)
+                    objectsToDraw.Add(tile.Object);
                 // Tile has been updated, redraw
                 tile.Draw(target);
+            }
+
+            foreach (var item in objectsToDraw) {
+                item.Draw(target);
             }
         }
 

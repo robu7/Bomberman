@@ -6,6 +6,7 @@ using System.Threading;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Diagnostics;
+using BombermanGame.MapObjects;
 
 namespace BombermanGame {
     class Game : NetworkReciever {
@@ -160,7 +161,7 @@ namespace BombermanGame {
                     //
                     // Step 3: Update fixed objects on the game map
                     //
-                    map.Update(currentTime);
+                    map.Update(currentTime, delta);
 
                     //
                     // Step 4: Update floating objects

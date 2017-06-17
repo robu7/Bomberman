@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using BombermanGame.MapObjects;
 
 namespace BombermanGame
 {
@@ -8,6 +9,7 @@ namespace BombermanGame
 
         private Player owner;
         private double creationTime;
+        private double lastTime;
         private readonly double timeToLive = 2.5;
         private readonly int range;
         public bool HasExploded { get; private set; } = false;
@@ -16,6 +18,7 @@ namespace BombermanGame
             this.owner = owner;
             this.creationTime = creationTime;
             this.range = owner.BombRange;
+            this.LocationResolver = new FixedLocationResolver(owner.Tile);
         }
 
         public static void LoadGraphics(SharpDX.Direct2D1.RenderTarget target) {
@@ -33,6 +36,44 @@ namespace BombermanGame
             }
             if (currentTime - creationTime >= timeToLive) {
                 Explode(currentTime);
+            }
+            var status = LocationResolver.UpdateLocation(currentTime, currentTime - lastTime);
+            
+            if(status != null)
+                if(status.ChangedTile) {
+                    status.PrevTile.Object = null;
+                    LocationResolver.CurrentTile.Object = this;
+
+                }
+
+            lastTime = currentTime;
+        }
+
+        public void Kicked(Game.Direction kickedFromSide)
+        {
+            if (!(this.LocationResolver is FloatingLocationResolver))
+                this.LocationResolver = new FloatingLocationResolver(this.Tile);
+
+            var resolver = this.LocationResolver as FloatingLocationResolver;
+
+            switch (kickedFromSide) {
+                case Game.Direction.East:
+                    resolver.Direction = Game.Direction.East;
+                    resolver.Velocity = new PointF(300, 0);
+                    break;
+                case Game.Direction.North:
+                    resolver.Direction = Game.Direction.North;
+                    resolver.Velocity = new PointF(0, -300);
+                    break;
+                case Game.Direction.South:
+                    resolver.Direction = Game.Direction.South;
+                    resolver.Velocity = new PointF(0, 300);
+                    break;
+                case Game.Direction.West:
+                    resolver.Direction = Game.Direction.West;
+                    resolver.Velocity = new PointF(-300, 0);
+                    break;
+
             }
         }
 
@@ -81,7 +122,8 @@ namespace BombermanGame
         }
 
         public override void Draw(SharpDX.Direct2D1.RenderTarget target) {
-            var b = Tile.Bounds;
+            var b = LocationResolver.Bounds;
+
             target.DrawBitmap(sprite, new SharpDX.Mathematics.Interop.RawRectangleF(b.Left, b.Top, b.Right, b.Bottom), 1, SharpDX.Direct2D1.BitmapInterpolationMode.Linear);
         }
 

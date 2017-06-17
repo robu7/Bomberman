@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using BombermanGame.MapObjects;
 
 namespace BombermanGame
 {

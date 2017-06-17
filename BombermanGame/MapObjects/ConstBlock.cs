@@ -1,4 +1,5 @@
 ﻿using SharpDX.Direct2D1;
+using BombermanGame.MapObjects;
 
 namespace BombermanGame {
     class ConstBlock : GameObject {
