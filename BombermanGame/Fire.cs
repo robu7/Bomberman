@@ -4,21 +4,21 @@ namespace BombermanGame
 {
     public enum FireType { Center, Horizontal, Vertical, Up, Down, Left, Right };
 
-    class Fire : FixedMapObject {
+    class Fire : GameObject {
 
         private Animation spriteAnimation;
 
-        public Fire(FireType direction, double startTime) : base(destructible: false) {
+        public Fire(FireType direction, double startTime) {
             spriteAnimation = FireAnimations.GetFireAnimation(direction, 1);
             spriteAnimation.Start(startTime);
+            IsDescructible = false;
         }
 
         public override void Update(double totalTime) {
             spriteAnimation.Update(totalTime);
-            this.mapTile?.MarkAsDirty();
+            Tile?.MarkAsDirty();
             if (spriteAnimation.State == AnimationState.Stopped) {
-                this.mapTile.Object = null;
-                this.mapTile = null;
+                Tile.Object = null;
             }
         }
 
@@ -26,7 +26,7 @@ namespace BombermanGame
             if (this.spriteAnimation.CurrentFrame == null) {
                 return;
             }
-            var b = this.mapTile.Bounds;
+            var b = Tile.Bounds;
             target.DrawBitmap(this.spriteAnimation.CurrentFrame, new SharpDX.Mathematics.Interop.RawRectangleF(b.Left, b.Top, b.Right, b.Bottom), 1, SharpDX.Direct2D1.BitmapInterpolationMode.Linear);
         }
 

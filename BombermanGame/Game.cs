@@ -15,7 +15,7 @@ namespace BombermanGame {
 
         private Thread GameThread;          // ---Game loop thread---
 
-        private List<FloatingObject> objectsInMotion;   // ---List of objects currently moving
+        private List<GameObject> objectsInMotion = new List<GameObject>();   // ---List of objects currently moving
 
         private InputHandler inputHandler;
 
@@ -81,7 +81,6 @@ namespace BombermanGame {
             this.inputHandler = inputHandler;
 
             this.communicationHandler.ActiveControl = this;
-            objectsInMotion = new List<FloatingObject>();
 
             map = Map.CreateDefault();
             players = new Dictionary<int, Player>();

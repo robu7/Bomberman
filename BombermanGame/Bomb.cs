@@ -2,7 +2,7 @@
 
 namespace BombermanGame
 {
-    class Bomb : FixedMapObject {
+    class Bomb : GameObject {
         
         private static SharpDX.Direct2D1.Bitmap sprite;
 
@@ -23,9 +23,8 @@ namespace BombermanGame
         }
 
         protected override void OnDestroy(double currentTime) {
-            this.mapTile.Object = null;
             Explode(currentTime);
-            this.mapTile = null;
+            base.OnDestroy(currentTime);
         }
 
         public override void Update(double currentTime) {
@@ -40,7 +39,7 @@ namespace BombermanGame
         private void Explode(double currentTime) {
             //Console.WriteLine("Bomb exploded at: {0}", bomb.getMapPosition());
 
-            this.mapTile.Object = new Fire(FireType.Center, currentTime);
+            Tile.Object = new Fire(FireType.Center, currentTime);
             
             ExplodeInDirection(Game.Direction.North, FireType.Up, currentTime);
             ExplodeInDirection(Game.Direction.South, FireType.Down, currentTime);
@@ -55,7 +54,7 @@ namespace BombermanGame
             FireType connectionType = (fireType == FireType.Up || fireType == FireType.Down) ? FireType.Vertical : FireType.Horizontal;
 
             var remainingRange = this.range;
-            var tile = this.mapTile;
+            var tile = this.Tile;
             while(remainingRange > 0) {
                 tile = tile.GetNextTileInDirection(direction);
                 remainingRange--;
@@ -82,7 +81,7 @@ namespace BombermanGame
         }
 
         public override void Draw(SharpDX.Direct2D1.RenderTarget target) {
-            var b = this.mapTile.Bounds;
+            var b = Tile.Bounds;
             target.DrawBitmap(sprite, new SharpDX.Mathematics.Interop.RawRectangleF(b.Left, b.Top, b.Right, b.Bottom), 1, SharpDX.Direct2D1.BitmapInterpolationMode.Linear);
         }
 

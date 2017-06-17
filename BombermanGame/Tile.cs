@@ -11,7 +11,7 @@ namespace BombermanGame {
         public static readonly Tile OutOfBounds = new Tile();
 
         private RectangleF bounds;
-        private FixedMapObject containedObject;
+        private GameObject containedObject;
 
         public RectangleF Bounds {
             get {
@@ -27,7 +27,7 @@ namespace BombermanGame {
             }
         }
 
-        public FixedMapObject Object {
+        public GameObject Object {
             get {
                 return this.containedObject;
             }

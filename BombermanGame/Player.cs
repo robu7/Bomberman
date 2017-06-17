@@ -11,13 +11,15 @@ namespace BombermanGame
         private bool draw;
         private double lastUpdateTime;
         private Animation spriteAnimation;
+        private FloatingLocationResolver movement;
 
-        public Player(Tile startTile) : base(startTile) {
+        public Player(Tile startTile) {
             draw = true;
             alive = true;
             BombCap = 4;
             BombRange = 1;
-            objectMovement = new FloatingMovement(this);
+            this.movement = new FloatingLocationResolver(startTile);
+            LocationResolver = this.movement;
         }
 
         public void Init() {
@@ -36,63 +38,13 @@ namespace BombermanGame
             this.spriteAnimation.Start(currentTime);
         }
         public void stopAnimating() { spriteAnimation.Stop(); }
-
-        private Tile debugNextTile;
+        
         public override void Update(double currentTime){
             var timeDelta = currentTime - this.lastUpdateTime;
-            //var previousBounds = this.bounds;
 
-            objectMovement.UpdateMovement(currentTime, timeDelta);
-            /*
-            var xDelta = Velocity.X * (float)timeDelta;
-            var yDelta = Velocity.Y * (float)timeDelta;
-
-            var nextTile = this.currentTile.GetNextTileInDirection(Direction);
-            debugNextTile = nextTile;
-            var newBounds = new RectangleF(new PointF(this.bounds.Left + xDelta, this.bounds.Top + yDelta), this.bounds.Size);
-            if (!nextTile.Bounds.IntersectsWith(this.bounds) && nextTile.Bounds.IntersectsWith(newBounds)) {
-                // Entering a new tile
-                if (!CanEnterTile(nextTile)) {
-                    // Not allowed to enter tile, constrain the movement
-                    if (xDelta != 0) {
-                        // Adjust x movement
-                        if (xDelta < 0) {
-                            xDelta = Math.Max(this.currentTile.Bounds.Left - this.bounds.Left, xDelta);
-                        } else {
-                            xDelta = Math.Min(this.currentTile.Bounds.Right - this.bounds.Right, xDelta);
-                        }
-                    }
-                    if (yDelta != 0) {
-                        // Adjust y movement
-                        if (yDelta < 0) {
-                            yDelta = Math.Max(this.currentTile.Bounds.Top - this.bounds.Top, yDelta);
-                        } else {
-                            yDelta = Math.Min(this.currentTile.Bounds.Bottom - this.bounds.Bottom, yDelta);
-                        }
-                    }
-                    Velocity = new PointF(0, 0);
-                }
-            }
-
-            MoveBy(xDelta, yDelta);
-
-            // Mark tiles around the player as dirty
-            this.currentTile.MarkAsDirty();
-            this.currentTile.West.MarkAsDirty();
-            this.currentTile.North.MarkAsDirty();
-            this.currentTile.East.MarkAsDirty();
-            this.currentTile.South.MarkAsDirty();
-
-            if (!this.currentTile.Bounds.Contains(this.centerPosition) && nextTile.Bounds.Contains(this.centerPosition)) {
-                // Switched current tile
-                this.currentTile = nextTile;
-            }
-
-            if (!Velocity.IsEmpty) {
-                AlignWithTileBounds();
-            }
-            */
-            InteractWithTileContent(this.mapTile);
+            this.movement.UpdateLocation(currentTime, timeDelta);
+            
+            InteractWithTileContent(this.movement.CurrentTile);
 
             spriteAnimation?.Update(currentTime);
             this.lastUpdateTime = currentTime;
@@ -112,35 +64,35 @@ namespace BombermanGame
             if (sprite == null) {
                 return;
             }
-            var b = this.objectMovement.Bounds;
+            var b = this.movement.Bounds;
             target.DrawBitmap(sprite, new SharpDX.Mathematics.Interop.RawRectangleF(b.Left, b.Top, b.Right, b.Bottom), 1, SharpDX.Direct2D1.BitmapInterpolationMode.Linear);
         }
 
         public void NewMovementDirection(Game.Direction newDirection, double currentTime) {
-            if (newDirection == objectMovement.Direction) {
+            if (newDirection == this.movement.Direction) {
                 // No need to update when direction is the same
                 return;
             }
 
             // Update direction
-            objectMovement.Direction = newDirection;
+            this.movement.Direction = newDirection;
 
             // Update velocity
             switch (newDirection) {
                 case Game.Direction.North:
-                    objectMovement.Velocity = new PointF(0, -225);
+                    this.movement.Velocity = new PointF(0, -225);
                     break;
                 case Game.Direction.South:
-                    objectMovement.Velocity = new PointF(0, 225);
+                    this.movement.Velocity = new PointF(0, 225);
                     break;
                 case Game.Direction.West:
-                    objectMovement.Velocity = new PointF(-225, 0);
+                    this.movement.Velocity = new PointF(-225, 0);
                     break;
                 case Game.Direction.East:
-                    objectMovement.Velocity = new PointF(225, 0);
+                    this.movement.Velocity = new PointF(225, 0);
                     break;
                 case Game.Direction.None:
-                    objectMovement.Velocity = new PointF(0, 0);
+                    this.movement.Velocity = new PointF(0, 0);
                     break;
             }
 
@@ -157,7 +109,7 @@ namespace BombermanGame
             if (BombCap == 0) {
                 return;
             }
-            if (this.mapTile?.Object as Bomb != null) {
+            if (this.movement.CurrentTile.Object as Bomb != null) {
                 // There is already a bomb at this location
                 return;
             }
@@ -165,7 +117,7 @@ namespace BombermanGame
             // Preconditions ok, deploy the bomb
             BombCap--;
             Bomb newBomb = new Bomb(this, this.lastUpdateTime);
-            this.mapTile.Object = newBomb;
+            this.movement.CurrentTile.Object = newBomb;
         }
 
         public void destroy() {

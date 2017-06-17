@@ -2,7 +2,7 @@
 
 namespace BombermanGame.Powerups
 {
-    abstract class Powerup : FixedMapObject
+    abstract class Powerup : GameObject
     {
         protected abstract Bitmap Sprite { get; }
         public double CreationTime { get; }
@@ -16,21 +16,19 @@ namespace BombermanGame.Powerups
         public override void Update(double totalTime) {
             if (totalTime - CreationTime >= TimeToLive) {
                 // Remove from the map
-                this.mapTile.Object = null;
-                this.mapTile = null;
+                Tile.Object = null;
             }
         }
 
         public override void Draw(RenderTarget target) {
             if (Sprite == null) { return; }
-            var b = this.mapTile.Bounds;
+            var b = Tile.Bounds;
             target.DrawBitmap(Sprite, new SharpDX.Mathematics.Interop.RawRectangleF(b.Left, b.Top, b.Right, b.Bottom), 1, SharpDX.Direct2D1.BitmapInterpolationMode.Linear);
         }
 
         public void ApplyAndConsume(Player player) {
             ApplyToPlayer(player);
-            this.mapTile.Object = null;
-            this.mapTile = null;
+            Tile.Object = null;
         }
 
         protected abstract void ApplyToPlayer(Player player);

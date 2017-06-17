@@ -6,7 +6,7 @@ namespace BombermanGame {
     class Map {
         private Tile[,] tiles;
 
-        public Map(FixedMapObject[,] mapObjects) {
+        public Map(GameObject[,] mapObjects) {
             var columns = mapObjects.GetLength(0);
             var rows = mapObjects.GetLength(1);
             Size = new Size(columns * Game.boxSize.Width, rows * Game.boxSize.Height);
@@ -65,7 +65,7 @@ namespace BombermanGame {
         }
 
         public static Map CreateDefault() {
-            var objects = new FixedMapObject[11, 11];
+            var objects = new GameObject[11, 11];
             for (int x = 0; x < 11; x++) {
                 for (int y = 0; y < 11; y++) {
                     if (x == 0 || x == 10 || y == 0 || y == 10) {

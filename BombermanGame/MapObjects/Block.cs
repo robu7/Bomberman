@@ -1,7 +1,7 @@
 ﻿using SharpDX.Direct2D1;
 
 namespace BombermanGame {
-    class Block : FixedMapObject {
+    class Block : GameObject {
         static private Bitmap sprite;
 
         public static void LoadGraphics(SharpDX.Direct2D1.RenderTarget target) {
@@ -9,7 +9,7 @@ namespace BombermanGame {
         }
 
         public override void Draw(RenderTarget target) {
-            var b = this.mapTile.Bounds;
+            var b = Tile.Bounds;
             target.DrawBitmap(sprite, new SharpDX.Mathematics.Interop.RawRectangleF(b.Left, b.Top, b.Right, b.Bottom), 1, SharpDX.Direct2D1.BitmapInterpolationMode.Linear);
         }
 
