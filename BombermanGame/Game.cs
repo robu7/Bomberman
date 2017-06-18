@@ -6,7 +6,7 @@ using System.Threading;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Diagnostics;
-using BombermanGame.MapObjects;
+using BombermanGame.GameObjects;
 
 namespace BombermanGame {
     class Game : NetworkReciever {

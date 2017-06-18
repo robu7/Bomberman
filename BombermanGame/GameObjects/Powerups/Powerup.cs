@@ -1,7 +1,7 @@
 ﻿using SharpDX.Direct2D1;
-using BombermanGame.MapObjects;
+using BombermanGame.GameObjects;
 
-namespace BombermanGame.Powerups
+namespace BombermanGame.GameObjects.Powerups
 {
     abstract class Powerup : GameObject
     {

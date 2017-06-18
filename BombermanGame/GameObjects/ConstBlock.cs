@@ -1,10 +1,14 @@
 ﻿using SharpDX.Direct2D1;
-using BombermanGame.MapObjects;
-using System;
+using BombermanGame.GameObjects;
 
 namespace BombermanGame {
-    class Block : GameObject {
-        private BitmapLoader loader = new BlockGraphicsLoader();
+    class ConstBlock : GameObject {
+
+        private static BitmapLoader loader = new ConstBlockGraphicsLoader();
+
+        public ConstBlock() {
+            IsDescructible = false;
+        }
 
         public override void Draw(RenderTarget target) {
             var b = Tile.Bounds;
@@ -12,12 +16,12 @@ namespace BombermanGame {
         }
 
         public override void Update(double totalTime) {
-            // No need to do anything here
+            // Nothing to do here
         }
     }
 
-    class BlockGraphicsLoader : BitmapLoader {
+    class ConstBlockGraphicsLoader : BitmapLoader {
         private static Bitmap sprite;
-        public BlockGraphicsLoader() : base(Properties.Resources.block, s => sprite = s, () => sprite) { }
+        public ConstBlockGraphicsLoader() : base(Properties.Resources.constblock, s => sprite = s, () => sprite) { }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
-using BombermanGame.Powerups;
-using BombermanGame.MapObjects;
+using BombermanGame.GameObjects.Powerups;
+using BombermanGame.GameObjects;
 using System.Collections;
 using System.Collections.Generic;
 

@@ -1,6 +1,6 @@
 ﻿using SharpDX.Direct2D1;
 
-namespace BombermanGame
+namespace BombermanGame.GameObjects
 {
     class Ground : IGraphicsResourceLoader {
         private static BitmapBrush groundBrush;

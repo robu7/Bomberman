@@ -3,10 +3,9 @@ using SharpDX.DXGI;
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using BombermanGame.Animations;
-using BombermanGame.Powerups;
 using System.Reflection;
 using System.Linq;
+using BombermanGame.GameObjects;
 
 namespace BombermanGame
 {

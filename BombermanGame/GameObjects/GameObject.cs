@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
 
-namespace BombermanGame.MapObjects
+namespace BombermanGame.GameObjects
 {
 
     /// <summary>

@@ -65,7 +65,7 @@
     <Compile Include="Animations\Animation.cs" />
     <Compile Include="Animations\PlayerAnimations.cs" />
     <Compile Include="IGraphicsResourceLoader.cs" />
-    <Compile Include="MapObjects\LocationResolver.cs" />
+    <Compile Include="GameObjects\LocationResolver.cs" />
     <Compile Include="MenuControls\HostGameMenuControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -73,11 +73,11 @@
       <DependentUpon>HostGameMenuControl.cs</DependentUpon>
     </Compile>
     <Compile Include="InputHandler.cs" />
-    <Compile Include="MapObjects\Block.cs" />
-    <Compile Include="Bomb.cs" />
+    <Compile Include="GameObjects\Block.cs" />
+    <Compile Include="GameObjects\Bomb.cs" />
     <Compile Include="Network\Communicator.cs" />
-    <Compile Include="MapObjects\ConstBlock.cs" />
-    <Compile Include="Fire.cs" />
+    <Compile Include="GameObjects\ConstBlock.cs" />
+    <Compile Include="GameObjects\Fire.cs" />
     <Compile Include="Animations\FireAnimations.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="GameForm.cs">
@@ -88,16 +88,16 @@
     </Compile>
     <Compile Include="GameHelpFunctions.cs" />
     <Compile Include="GraphicsEngine.cs" />
-    <Compile Include="MapObjects\Ground.cs" />
+    <Compile Include="GameObjects\Ground.cs" />
     <Compile Include="Map.cs" />
-    <Compile Include="MapObjects\MapObject.cs" />
+    <Compile Include="GameObjects\GameObject.cs" />
     <Compile Include="Network\Packet.cs" />
-    <Compile Include="Player.cs" />
+    <Compile Include="GameObjects\Player.cs" />
     <Compile Include="PlayerInfo.cs" />
-    <Compile Include="Powerups\KickAbilityPowerup.cs" />
-    <Compile Include="Powerups\BombRangePowerup.cs" />
-    <Compile Include="Powerups\ExtraBombPowerup.cs" />
-    <Compile Include="Powerups\Powerup.cs" />
+    <Compile Include="GameObjects\Powerups\KickAbilityPowerup.cs" />
+    <Compile Include="GameObjects\Powerups\BombRangePowerup.cs" />
+    <Compile Include="GameObjects\Powerups\ExtraBombPowerup.cs" />
+    <Compile Include="GameObjects\Powerups\Powerup.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="MenuControls\JoinGameMenuControl.cs">

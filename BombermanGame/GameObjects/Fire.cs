@@ -1,8 +1,4 @@
-﻿using System.Drawing;
-using BombermanGame.MapObjects;
-
-namespace BombermanGame
-{
+﻿namespace BombermanGame.GameObjects {
     public enum FireType { Center, Horizontal, Vertical, Up, Down, Left, Right };
 
     class Fire : GameObject {

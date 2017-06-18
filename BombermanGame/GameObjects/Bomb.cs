@@ -1,8 +1,6 @@
 ﻿using System.Drawing;
-using BombermanGame.MapObjects;
 
-namespace BombermanGame
-{
+namespace BombermanGame.GameObjects {
     class Bomb : GameObject {
         
         private BitmapLoader loader = new BombGraphicsLoader();

@@ -2,10 +2,9 @@
 using System.Drawing;
 using System.Timers;
 using BombermanGame.Animations;
-using BombermanGame.Powerups;
-using BombermanGame.MapObjects;
+using BombermanGame.GameObjects.Powerups;
 
-namespace BombermanGame
+namespace BombermanGame.GameObjects
 {
     class Player : GameObject {
         private bool alive;

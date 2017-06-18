@@ -1,7 +1,7 @@
 ﻿using System;
 using SharpDX.Direct2D1;
 
-namespace BombermanGame.Powerups {
+namespace BombermanGame.GameObjects.Powerups {
     class BombRangePowerup : Powerup {
 
         private BitmapLoader loader = new BombRangePowerupGraphicsLoader();
