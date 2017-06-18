@@ -1,6 +1,7 @@
 ﻿using SharpDX;
 using SharpDX.Direct2D1;
 using SharpDX.DXGI;
+using System;
 using System.Runtime.InteropServices;
 
 namespace BombermanGame {
@@ -39,6 +40,34 @@ namespace BombermanGame {
 
                     return new Bitmap(renderTarget, size, tempStream, stride, bitmapProperties);
                 }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Convenience class to reduce boilerplate code when rendering a single bitmap
+    /// </summary>
+    public abstract class BitmapLoader : IGraphicsResourceLoader {
+        private System.Drawing.Bitmap sourceBitmap;
+        private Action<Bitmap> setter;
+        private Func<Bitmap> getter;
+
+        public BitmapLoader(System.Drawing.Bitmap sourceBitmap, Action<Bitmap> setter, Func<Bitmap> getter) {
+            this.sourceBitmap = sourceBitmap;
+            this.getter = getter;
+            this.setter = setter;
+        }
+
+        public void LoadGraphics(RenderTarget target) {
+            Bitmap = this.sourceBitmap.CreateDirectX2D1Bitmap(target);
+        }
+
+        public Bitmap Bitmap {
+            get {
+                return this.getter();
+            }
+            private set {
+                this.setter(value);
             }
         }
     }

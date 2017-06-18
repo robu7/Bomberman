@@ -3,18 +3,19 @@
 namespace BombermanGame.Powerups {
     class KickAbilityPowerup : Powerup {
 
-        private static Bitmap sprite;
+        private static BitmapLoader loader = new KickAbilityPowerupGraphicsLoader();
 
-        protected override Bitmap Sprite => sprite;
-
-        public static void LoadGraphics(RenderTarget target) {
-            sprite = Properties.Resources.PlayerSprite.CreateDirectX2D1Bitmap(target);
-        }
+        protected override Bitmap Sprite => loader.Bitmap;
 
         protected override void ApplyToPlayer(Player player) {
             // TODO
         }
 
         public KickAbilityPowerup(double creationTime) : base(creationTime) {}
+    }
+
+    class KickAbilityPowerupGraphicsLoader : BitmapLoader {
+        private static Bitmap sprite;
+        public KickAbilityPowerupGraphicsLoader() : base(Properties.Resources.PlayerSprite, s => sprite = s, () => sprite) { }
     }
 }

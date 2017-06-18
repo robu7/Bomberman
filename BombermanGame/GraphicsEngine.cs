@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using BombermanGame.Animations;
 using BombermanGame.Powerups;
+using System.Reflection;
+using System.Linq;
 
 namespace BombermanGame
 {
@@ -34,16 +36,23 @@ namespace BombermanGame
                 });
 
             // Prepare all the graphics resources used in the game
-            // TODO: Do this using Reflection instead
-            Ground.LoadGraphics(target);
-            Block.LoadGraphics(target);
-            ConstBlock.LoadGraphics(target);
-            PlayerAnimations.LoadGraphics(target);
-            Bomb.LoadGraphics(target);
-            FireAnimations.LoadGraphics(target);
-            BombRangePowerup.LoadGraphics(target);
-            ExtraBombPowerup.LoadGraphics(target);
-            KickAbilityPowerup.LoadGraphics(target);
+            LoadGraphics(target);
+        }
+
+        /// <summary>
+        /// Prepares all graphics resources used in the game
+        /// </summary>
+        private void LoadGraphics(RenderTarget target) {
+            // Use reflection to get a list of all types that implement the IGraphicsResourceLoader interface
+            // and instantiate all of them
+            var resourceLoaders = Assembly.GetExecutingAssembly().GetTypes()
+                .Where(t => typeof(IGraphicsResourceLoader).IsAssignableFrom(t) && !t.IsAbstract)
+                .Select(t => (IGraphicsResourceLoader)t.GetConstructor(new Type[0]).Invoke(new object[0]))
+                .ToList();
+            // Then let them load resources for the specified render target
+            foreach (var loader in resourceLoaders) {
+                loader.LoadGraphics(target);
+            }
         }
 
         public void Draw() {

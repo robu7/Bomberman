@@ -64,6 +64,8 @@
   <ItemGroup>
     <Compile Include="Animations\Animation.cs" />
     <Compile Include="Animations\PlayerAnimations.cs" />
+    <Compile Include="IGraphicsResourceLoader.cs" />
+    <Compile Include="MapObjects\LocationResolver.cs" />
     <Compile Include="MenuControls\HostGameMenuControl.cs">
       <SubType>UserControl</SubType>
     </Compile>

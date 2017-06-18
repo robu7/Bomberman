@@ -5,7 +5,7 @@ namespace BombermanGame
 {
     class Bomb : GameObject {
         
-        private static SharpDX.Direct2D1.Bitmap sprite;
+        private BitmapLoader loader = new BombGraphicsLoader();
 
         private Player owner;
         private double creationTime;
@@ -19,10 +19,6 @@ namespace BombermanGame
             this.creationTime = creationTime;
             this.range = owner.BombRange;
             this.LocationResolver = new FixedLocationResolver(owner.Tile);
-        }
-
-        public static void LoadGraphics(SharpDX.Direct2D1.RenderTarget target) {
-            sprite = Properties.Resources.bomb.CreateDirectX2D1Bitmap(target);
         }
 
         protected override void OnDestroy(double currentTime) {
@@ -124,11 +120,16 @@ namespace BombermanGame
         public override void Draw(SharpDX.Direct2D1.RenderTarget target) {
             var b = LocationResolver.Bounds;
 
-            target.DrawBitmap(sprite, new SharpDX.Mathematics.Interop.RawRectangleF(b.Left, b.Top, b.Right, b.Bottom), 1, SharpDX.Direct2D1.BitmapInterpolationMode.Linear);
+            target.DrawBitmap(loader.Bitmap, new SharpDX.Mathematics.Interop.RawRectangleF(b.Left, b.Top, b.Right, b.Bottom), 1, SharpDX.Direct2D1.BitmapInterpolationMode.Linear);
         }
 
         public override string ToString() {
             return "Bomb";
         }
+    }
+
+    class BombGraphicsLoader : BitmapLoader {
+        private static SharpDX.Direct2D1.Bitmap sprite;
+        public BombGraphicsLoader() : base(Properties.Resources.bomb, s => sprite = s, () => sprite) { }
     }
 }

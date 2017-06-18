@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Drawing;
 
 namespace BombermanGame.Animations {
-    static class PlayerAnimations {
+    class PlayerAnimations : IGraphicsResourceLoader {
         static private List<SharpDX.Direct2D1.Bitmap> up;
         static private List<SharpDX.Direct2D1.Bitmap> down;
         static private List<SharpDX.Direct2D1.Bitmap> left;
         static private List<SharpDX.Direct2D1.Bitmap> right;
         static private List<SharpDX.Direct2D1.Bitmap> death;
 
-        public static void LoadGraphics(SharpDX.Direct2D1.RenderTarget target) {
+        public void LoadGraphics(SharpDX.Direct2D1.RenderTarget target) {
             up = new List<SharpDX.Direct2D1.Bitmap>();
             down = new List<SharpDX.Direct2D1.Bitmap>();
             left = new List<SharpDX.Direct2D1.Bitmap>();

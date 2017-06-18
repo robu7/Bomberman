@@ -4,12 +4,12 @@ using System.Drawing;
 
 namespace BombermanGame {
 
-    static class FireAnimations {
+    class FireAnimations : IGraphicsResourceLoader {
 
         // Used to only extract sprites from the original resources once
         private static IReadOnlyDictionary<FireType, IReadOnlyList<SharpDX.Direct2D1.Bitmap>> sprites;
 
-        public static void LoadGraphics(SharpDX.Direct2D1.RenderTarget target) {
+        public void LoadGraphics(SharpDX.Direct2D1.RenderTarget target) {
             sprites = new Dictionary<FireType, IReadOnlyList<SharpDX.Direct2D1.Bitmap>> {
                 { FireType.Left, BuildSpriteSequence(Properties.Resources.ExplosionLeft, target) },
                 { FireType.Right, BuildSpriteSequence(Properties.Resources.ExplosionRight, target) },

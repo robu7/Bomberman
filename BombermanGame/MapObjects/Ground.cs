@@ -2,10 +2,10 @@
 
 namespace BombermanGame
 {
-    class Ground {
+    class Ground : IGraphicsResourceLoader {
         private static BitmapBrush groundBrush;
 
-        public static void LoadGraphics(RenderTarget target) {
+        public void LoadGraphics(RenderTarget target) {
             var sprite = Properties.Resources.Ground.CreateDirectX2D1Bitmap(target);
             groundBrush = new BitmapBrush(target, sprite, new BitmapBrushProperties { ExtendModeX = ExtendMode.Wrap, ExtendModeY = ExtendMode.Wrap });
         }
