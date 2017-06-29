@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Diagnostics;
 using BombermanGame.GameObjects;
+using System.Media;
 
 namespace BombermanGame {
     class Game : NetworkReciever {
@@ -114,6 +115,7 @@ namespace BombermanGame {
             //SoundPlayer themeMusic = new SoundPlayer(Properties.Resources.theme1);
             //themeMusic.Play();
 
+
             GameThread.Start();
         }
 
@@ -170,7 +172,11 @@ namespace BombermanGame {
                         player.Value.Update(currentTime);
                         //checkPlayerCollision(player.Value);
                     }
-                    
+
+                    foreach (var item in FloatingObjectRegistry.GetMovingObjects()) {
+                        item.Update(currentTime);
+                    }
+                    FloatingObjectRegistry.RemoveDestroyedObjects();
                     //
                     // Step 5: Execute netwok syncronizations messages,
                     //         and wait for them to finish

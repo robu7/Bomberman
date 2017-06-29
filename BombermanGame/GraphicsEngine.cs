@@ -63,6 +63,10 @@ namespace BombermanGame
             catch {
                 Console.WriteLine("Exception in graphic engine");
             }
+
+            foreach (var item in FloatingObjectRegistry.GetMovingObjects()) {
+                item.Draw(this.target);
+            }
             foreach (var player in players) {
                 if (player.ShouldDraw()) {
                     player.Draw(this.target);

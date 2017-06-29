@@ -6,6 +6,30 @@ using System.Collections;
 using System.Collections.Generic;
 
 namespace BombermanGame {
+
+    class FloatingObjectRegistry
+    {
+        private static List<GameObject> objectsInMotion = new List<GameObject>();
+
+        public static void Register(GameObject movingObject)
+        {
+            objectsInMotion.Add(movingObject);
+        }
+
+        public static void UnRegister(GameObject movingObject)
+        {
+            if(objectsInMotion.Contains(movingObject))
+                objectsInMotion.Remove(movingObject);
+        }
+        public static List<GameObject> GetMovingObjects() { return new List<GameObject>(objectsInMotion); }
+
+        public static void RemoveDestroyedObjects()
+        {
+            objectsInMotion.RemoveAll(x => x.PendingDestroy);
+        }
+    }
+
+
     class Map {
         private Tile[,] tiles;
 

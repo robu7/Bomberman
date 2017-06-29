@@ -9,6 +9,7 @@ namespace BombermanGame.GameObjects
         public Tile PrevTile { get; set; } = null;
         public bool ChangedTile { get; set; } = false;
         public bool HaveCollided { get; set; } = false;
+        public Game.Direction CollisionDirection { get; set; }
 
         public LocationResolvStatus()
         {
@@ -79,6 +80,30 @@ namespace BombermanGame.GameObjects
 
             var newBounds = new RectangleF(new PointF(Bounds.Left + xDelta, Bounds.Top + yDelta), Bounds.Size);
 
+
+            foreach (var item in FloatingObjectRegistry.GetMovingObjects()) {
+                if (item.Tile != CurrentTile && item.Tile.Bounds.IntersectsWith(newBounds)) {
+                    // Not allowed to enter tile, constrain the movement
+                    if (xDelta != 0) {
+                        // Adjust x movement
+                        if (xDelta < 0) {
+                            xDelta = Math.Max(CurrentTile.Bounds.Left - Bounds.Left, xDelta);
+                        } else {
+                            xDelta = Math.Min(CurrentTile.Bounds.Right - Bounds.Right, xDelta);
+                        }
+                    }
+                    if (yDelta != 0) {
+                        // Adjust y movement
+                        if (yDelta < 0) {
+                            yDelta = Math.Max(CurrentTile.Bounds.Top - Bounds.Top, yDelta);
+                        } else {
+                            yDelta = Math.Min(CurrentTile.Bounds.Bottom - Bounds.Bottom, yDelta);
+                        }
+                    }
+                    Velocity = new PointF(0, 0);
+                }
+            }
+
             if (!nextTile.Bounds.IntersectsWith(Bounds) && nextTile.Bounds.IntersectsWith(newBounds)) {
                 // Entering a new tile
                 if (!CanEnterTile(nextTile)) {
@@ -101,6 +126,8 @@ namespace BombermanGame.GameObjects
                     }
                     Velocity = new PointF(0, 0);
                 }
+            } else if (nextTile.Bounds.IntersectsWith(newBounds) && CurrentTile != nextTile) {
+                CanEnterTile(nextTile);
             }
 
             MoveBy(xDelta, yDelta);
@@ -143,6 +170,7 @@ namespace BombermanGame.GameObjects
             if (tileToEnter.Object is Block || tileToEnter.Object is ConstBlock || tileToEnter.Object is Bomb) {
                 status.CollisionObject = tileToEnter.Object;
                 status.HaveCollided = true;
+                status.CollisionDirection = Direction;
                 return false;
             }
 

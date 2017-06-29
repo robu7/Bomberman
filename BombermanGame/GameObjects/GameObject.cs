@@ -9,6 +9,7 @@ namespace BombermanGame.GameObjects
     /// </summary>
     abstract class GameObject
     {
+        public bool PendingDestroy { get; set; }
         private LocationResolver location;
         public LocationResolver LocationResolver {
             get {

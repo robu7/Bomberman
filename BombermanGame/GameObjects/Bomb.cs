@@ -34,10 +34,13 @@ namespace BombermanGame.GameObjects {
             var status = LocationResolver.UpdateLocation(currentTime, currentTime - lastTime);
             
             if(status != null)
-                if(status.ChangedTile) {
-                    status.PrevTile.Object = null;
-                    LocationResolver.CurrentTile.Object = this;
-
+                if(status.HaveCollided) {
+                    Tile.Object = this;
+                    LocationResolver = new FixedLocationResolver(Tile);
+                    FloatingObjectRegistry.UnRegister(this);
+                    if(status.CollisionObject is Bomb) {
+                        (status.CollisionObject as Bomb).Kicked(status.CollisionDirection);
+                    }
                 }
 
             lastTime = currentTime;
@@ -45,6 +48,8 @@ namespace BombermanGame.GameObjects {
 
         public void Kicked(Game.Direction kickedFromSide)
         {
+            System.Console.WriteLine("Kicked from direction: " + kickedFromSide);
+
             if (!(this.LocationResolver is FloatingLocationResolver))
                 this.LocationResolver = new FloatingLocationResolver(this.Tile);
 
@@ -67,12 +72,19 @@ namespace BombermanGame.GameObjects {
                     resolver.Direction = Game.Direction.West;
                     resolver.Velocity = new PointF(-300, 0);
                     break;
-
             }
+
+            Tile.Object = null;
+            FloatingObjectRegistry.Register(this);
         }
 
         private void Explode(double currentTime) {
             //Console.WriteLine("Bomb exploded at: {0}", bomb.getMapPosition());
+            if (HasExploded)
+                return;
+
+            HasExploded = true;
+            PendingDestroy = true;
 
             Tile.Object = new Fire(FireType.Center, currentTime);
             
@@ -81,7 +93,6 @@ namespace BombermanGame.GameObjects {
             ExplodeInDirection(Game.Direction.West, FireType.Left, currentTime);
             ExplodeInDirection(Game.Direction.East, FireType.Right, currentTime);
 
-            HasExploded = true;
             this.owner.BombCap++;
         }
         
@@ -95,6 +106,13 @@ namespace BombermanGame.GameObjects {
                 remainingRange--;
                 if (tile == Tile.OutOfBounds) {
                     break;
+                }
+
+                foreach (var item in FloatingObjectRegistry.GetMovingObjects()) {
+                    if(item.IsDescructible)
+                        if (item.Tile == tile) {
+                            item.Destroy(currentTime);
+                        }
                 }
 
                 var elem = tile.Object;
