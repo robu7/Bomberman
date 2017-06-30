@@ -27,6 +27,8 @@
             target.DrawBitmap(this.spriteAnimation.CurrentFrame, new SharpDX.Mathematics.Interop.RawRectangleF(b.Left, b.Top, b.Right, b.Bottom), 1, SharpDX.Direct2D1.BitmapInterpolationMode.Linear);
         }
 
+        public double GetStartTime() { return spriteAnimation.AnimationStartTime; }
+
         public override string ToString() {
             return "Fire";
         }

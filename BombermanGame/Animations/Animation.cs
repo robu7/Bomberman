@@ -16,6 +16,7 @@ namespace BombermanGame {
         private double cycleDuration;
         private bool repeatCycle;
         private double animationStartTime;
+        public double AnimationStartTime { get { return animationStartTime; } }
 
         public Animation(IEnumerable<Bitmap> spriteSequence, double cycleDuration, bool repeatCycle) {
             this.spriteSequence = spriteSequence.ToList();
