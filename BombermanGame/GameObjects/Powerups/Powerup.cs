@@ -3,10 +3,12 @@ using BombermanGame.GameObjects;
 
 namespace BombermanGame.GameObjects.Powerups
 {
+    enum PowerupType { ExtraBomb = 1, ExtraPower, KickAbility};
+
     abstract class Powerup : GameObject
     {
         protected abstract Bitmap Sprite { get; }
-        public double CreationTime { get; }
+        public double CreationTime { get; private set; }
         public double TimeToLive { get; private set; }
 
         public Powerup(double creationTime) {
@@ -14,10 +16,16 @@ namespace BombermanGame.GameObjects.Powerups
             TimeToLive = 5;
         }
 
+        public void SpawnedFromBlock(double creationTime)
+        {
+            CreationTime = creationTime;
+        }
+
         public override void Update(double totalTime) {
             if (totalTime - CreationTime >= TimeToLive) {
                 // Remove from the map
-                Tile.Object = null;
+                //Tile.Object = null;
+                Destroy(totalTime);
             }
         }
 

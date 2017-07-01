@@ -43,7 +43,7 @@ namespace BombermanGame.GameObjects
                 return;
             }
             LocationResolver.CurrentTile.Object = null;
-            LocationResolver = null;
+            //LocationResolver = null;
         }
 
         public abstract void Update(double totalTime);

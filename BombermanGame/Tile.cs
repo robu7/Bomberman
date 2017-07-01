@@ -14,6 +14,15 @@ namespace BombermanGame {
         private RectangleF bounds;
         private GameObject containedObject;
 
+        public Point MapCoordinate { get; private set; }
+
+        public Tile() { }
+
+        public Tile(Point coordinate)
+        {
+            this.MapCoordinate = coordinate;
+        }
+
         public RectangleF Bounds {
             get {
                 return this.bounds;

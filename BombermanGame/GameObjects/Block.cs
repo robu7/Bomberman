@@ -1,10 +1,12 @@
 ﻿using SharpDX.Direct2D1;
 using BombermanGame.GameObjects;
 using System;
+using BombermanGame.GameObjects.Powerups;
 
 namespace BombermanGame {
     class Block : GameObject {
         private BitmapLoader loader = new BlockGraphicsLoader();
+        public Powerup HiddenItem = null;
 
         public override void Draw(RenderTarget target) {
             var b = Tile.Bounds;
@@ -13,6 +15,13 @@ namespace BombermanGame {
 
         public override void Update(double totalTime) {
             // No need to do anything here
+        }
+
+        protected override void OnDestroy(double currentTime)
+        {
+            base.OnDestroy(currentTime);
+            Tile.Object = HiddenItem;
+            HiddenItem?.SpawnedFromBlock(currentTime);          
         }
     }
 

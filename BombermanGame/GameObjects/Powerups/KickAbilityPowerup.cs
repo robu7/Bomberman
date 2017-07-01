@@ -8,7 +8,7 @@ namespace BombermanGame.GameObjects.Powerups {
         protected override Bitmap Sprite => loader.Bitmap;
 
         protected override void ApplyToPlayer(Player player) {
-            // TODO
+            player.CanKick = true;
         }
 
         public KickAbilityPowerup(double creationTime) : base(creationTime) {}

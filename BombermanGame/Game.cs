@@ -85,6 +85,12 @@ namespace BombermanGame {
             this.communicationHandler.ActiveControl = this;
 
             map = Map.CreateDefault();
+            if (communicationHandler.IsHost) {
+                var tmp = Map.GenerateMapPowerups(map);
+                Console.WriteLine(tmp.Count());
+                // BroadCast
+            }
+
             players = new Dictionary<int, Player>();
             networkCommands = new List<Task>();
             myID = communicationHandler.PeerID;

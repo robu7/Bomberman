@@ -41,7 +41,7 @@ namespace BombermanGame {
             // Create tiles that wrap the given objects...
             for (int y = 0; y < rows; y++) {
                 for (int x = 0; x < columns; x++) {
-                    var tile = new Tile() {
+                    var tile = new Tile(new Point(y,x)) {
                         Bounds = new RectangleF(x * Game.tileSize, y * Game.tileSize, Game.tileSize, Game.tileSize),
                         Object = mapObjects[x, y]
                     };
@@ -116,9 +116,39 @@ namespace BombermanGame {
             objects[1, 2] = null;
             objects[1, 3] = null;
             objects[2, 1] = null;
-            objects[3, 1] = new BombRangePowerup(0);
+            objects[3, 1] = null;
+            //objects[3, 1] = new BombRangePowerup(0);
+
+            //GenerateMapPowerups(objects);
 
             return new Map(objects);
+        }
+
+        public static IEnumerable<KeyValuePair<Point, PowerupType>> GenerateMapPowerups(Map map)
+        {
+            foreach (var item in map.tiles) {
+                if (item.Object is Block) {
+                    Random rand = new Random(item.GetHashCode());
+                    int randValue = rand.Next(0, 100);
+                    if (randValue < 50) {
+                        PowerupType newPowerUp = 0;
+
+                        if (randValue < 20) {
+                            (item.Object as Block).HiddenItem = new BombRangePowerup(0);
+                            newPowerUp = PowerupType.ExtraPower;
+                        } else if (randValue < 40) {
+                            (item.Object as Block).HiddenItem = new ExtraBombPowerup(0);
+                            newPowerUp = PowerupType.ExtraBomb;
+                        } else {
+                            (item.Object as Block).HiddenItem = new KickAbilityPowerup(0);
+                            newPowerUp = PowerupType.KickAbility;
+                        }
+
+                        yield return new KeyValuePair<Point, PowerupType>(item.MapCoordinate, newPowerUp);
+                    }
+                }
+            }
+            yield break;
         }
     }
 }

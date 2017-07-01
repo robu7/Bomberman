@@ -124,19 +124,23 @@ namespace BombermanGame.GameObjects {
                     }
                 }  else if (elem.IsDescructible) {
                     elem.Destroy(currentTime);
-                    if (tile.Object?.IsDescructible ?? true) {
+
+                    if (tile.Object == null) {
                         tile.Object = new Fire(fireType, currentTime);
                     }
+
+                    //if (tile.Object?.IsDescructible ?? true) {
+                    //    tile.Object = new Fire(fireType, currentTime);
+                    //}
                     break;
                 } else if (elem is Fire) {
                     var elemStart = (elem as Fire).GetStartTime();
-                    System.Console.WriteLine(elemStart + "   " + currentTime);
                     if (elemStart < currentTime) {
                         elem.Destroy(currentTime);
-                        System.Console.WriteLine("Replaciong fire: " + elemStart + "   " + currentTime);
                         tile.Object = new Fire(remainingRange == 0 ? fireType : connectionType, currentTime);
-                    }
-                    break;
+                    } else
+                        break;
+
                 } else
                     break;
             }

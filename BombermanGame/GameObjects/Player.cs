@@ -16,8 +16,9 @@ namespace BombermanGame.GameObjects
         public Player(Tile startTile) {
             draw = true;
             alive = true;
-            BombCap = 4;
+            BombCap = 1;
             BombRange = 1;
+            CanKick = false;
             this.movement = new FloatingLocationResolver(startTile);
             LocationResolver = this.movement;
         }
@@ -28,6 +29,7 @@ namespace BombermanGame.GameObjects
 
         public int BombCap { get; set; }
         public int BombRange { get; set; }
+        public bool CanKick { get; set; }
 
         public bool isAlive() { return alive; }
         public bool ShouldDraw() { return draw; }
@@ -44,7 +46,7 @@ namespace BombermanGame.GameObjects
 
             var status = this.movement.UpdateLocation(currentTime, timeDelta);
             
-            if(status.HaveCollided && status.CollisionObject is Bomb) {
+            if(status.HaveCollided && CanKick && status.CollisionObject is Bomb) {
                 (status.CollisionObject as Bomb).Kicked(this.movement.Direction);
                 Console.WriteLine("Player Kicked a Bomb");
             }
