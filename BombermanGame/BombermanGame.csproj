@@ -63,6 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Animations\Animation.cs" />
+    <Compile Include="Animations\BlockAnimation.cs" />
     <Compile Include="Animations\PlayerAnimations.cs" />
     <Compile Include="IGraphicsResourceLoader.cs" />
     <Compile Include="GameObjects\LocationResolver.cs" />
@@ -193,6 +194,9 @@
     <Folder Include="Resources\Animations\" />
     <Folder Include="Resources\MapImages\" />
     <Folder Include="Resources\Sound\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\BlockDestruction.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
