@@ -33,16 +33,34 @@ namespace BombermanGame.GameObjects
 
         public bool isAlive() { return alive; }
         public bool ShouldDraw() { return draw; }
-        private void stopDrawing() { draw = false; }
+        private void StopDrawing() { draw = false; }
 
         public void startAnimating(Game.Direction direction, double currentTime) {
             this.spriteAnimation = PlayerAnimations.GetWalkAnimation(direction, 0.6);
             this.spriteAnimation.Start(currentTime);
         }
-        public void stopAnimating() { spriteAnimation.Stop(); }
+        public void StopAnimating() { spriteAnimation.Stop(); }
         
         public override void Update(double currentTime){
             var timeDelta = currentTime - this.lastUpdateTime;
+
+            if (!alive) {
+                if(spriteAnimation?.State == AnimationState.Stopped) {
+                    StopDrawing();
+                    StopAnimating();
+                    //this.alive = false;
+                    this.PendingDestroy = true;
+                    // Remove player
+                }
+
+                Tile.MarkAsDirty();
+                Tile.South.MarkAsDirty();
+                Tile.North.MarkAsDirty();
+                Tile.East.MarkAsDirty();
+                Tile.West.MarkAsDirty();
+                spriteAnimation?.Update(currentTime);
+                return;
+            }
 
             var status = this.movement.UpdateLocation(currentTime, timeDelta);
             
@@ -51,16 +69,16 @@ namespace BombermanGame.GameObjects
                 Console.WriteLine("Player Kicked a Bomb");
             }
 
-            InteractWithTileContent(this.movement.CurrentTile);
+            InteractWithTileContent(this.movement.CurrentTile, currentTime);
 
             spriteAnimation?.Update(currentTime);
             this.lastUpdateTime = currentTime;
         }
 
-        private void InteractWithTileContent(Tile enteredTile) {
+        private void InteractWithTileContent(Tile enteredTile, double currentTime) {
             var tileObject = enteredTile.Object;
             if (tileObject is Fire) {
-                destroy();
+                Destroy(currentTime);
             } else if (tileObject is Powerup) {
                 (tileObject as Powerup).ApplyAndConsume(this);
             }
@@ -105,7 +123,7 @@ namespace BombermanGame.GameObjects
 
             // Update animation
             if (newDirection == Game.Direction.None) {
-                stopAnimating();
+                StopAnimating();
             } else {
                 startAnimating(newDirection, currentTime);
             }
@@ -127,14 +145,12 @@ namespace BombermanGame.GameObjects
             this.movement.CurrentTile.Object = newBomb;
         }
 
-        public void destroy() {
-            alive = false;
+        protected override void OnDestroy(double currentTime) {
+            this.alive = false;
+            //this.PendingDestroy = true;
             Console.WriteLine("Destroy player ");
             this.spriteAnimation = PlayerAnimations.GetDeathAnimation(1);
-            Timer deathTimer = new Timer(1200);
-            deathTimer.AutoReset = false;
-            deathTimer.Elapsed += delegate { stopDrawing(); };
-            deathTimer.Start();
+            this.spriteAnimation.Start(currentTime);
         }
     }
 }

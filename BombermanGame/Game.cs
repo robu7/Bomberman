@@ -145,27 +145,34 @@ namespace BombermanGame {
                 newTime = ((double)timer.ElapsedMilliseconds) / 1000;
                 timeUntilNextFrame = newTime - currentTime;
                 currentTime = newTime;
-                
+
+                //
+                // Step 2: Check keyboard input and replicate to other players
+                //
+                if (myPlayerInstance.isAlive()) {
+                    if (inputHandler.UpdatedInput) {
+                        myPlayerInstance.NewMovementDirection(inputHandler.PressedDirection, currentTime);
+                        //communicationHandler.Broadcast(PacketBuilder.Build_PlayerMovement(myID, inputHandler.PressedDirection));
+                        inputHandler.UpdatedInput = false;
+                    }
+                    if (inputHandler.DeployBomb) {
+                        if (myPlayerInstance.BombCap > 0)
+                            myPlayerInstance.DeployBomb();
+                        //inputHandler.DeployBomb = false;
+                        communicationHandler.Broadcast(PacketBuilder.Build_DeployBomb(myID));
+                    }
+                    communicationHandler.Broadcast(PacketBuilder.Build_PlayerMovement(myID, inputHandler.PressedDirection));
+                }
+                communicationHandler.Broadcast(PacketBuilder.Build_Ready(myID));
+
+                //
+                //
+                //
+                readySignal.WaitOne();
+
                 while (timeUntilNextFrame > 0.0) {
                     delta = Math.Min(timeUntilNextFrame, dt);
 
-                    //
-                    // Step 2: Check keyboard input and replicate to other players
-                    //
-                    if (myPlayerInstance.isAlive()) {
-                        if (inputHandler.UpdatedInput) {
-                            myPlayerInstance.NewMovementDirection(inputHandler.PressedDirection, currentTime);
-                            communicationHandler.Broadcast(PacketBuilder.Build_PlayerMovement(myID, inputHandler.PressedDirection));
-                            inputHandler.UpdatedInput = false;
-                        }
-                        if (inputHandler.DeployBomb) {
-                            if (myPlayerInstance.BombCap > 0)
-                                myPlayerInstance.DeployBomb();
-                            //inputHandler.DeployBomb = false;
-                            communicationHandler.Broadcast(PacketBuilder.Build_DeployBomb(myID));
-                        }
-                    }
-                    
                     //
                     // Step 3: Update fixed objects on the game map
                     //
@@ -174,10 +181,19 @@ namespace BombermanGame {
                     //
                     // Step 4: Update floating objects
                     //
-                    foreach (var player in players.Where(p => p.Value.isAlive())) {
+                    foreach (var player in players) {
                         player.Value.Update(currentTime);
                         //checkPlayerCollision(player.Value);
                     }
+
+                    // Remove dead players, do this better 
+                    foreach (var player in players.Where(x => x.Value.PendingDestroy).ToList()) {
+                        players.Remove(player.Key);
+                    }
+
+                    // Check if game is over
+                    //CheckIfGameOver();
+
 
                     foreach (var item in FloatingObjectRegistry.GetMovingObjects()) {
                         item.Update(currentTime);
@@ -187,10 +203,11 @@ namespace BombermanGame {
                     // Step 5: Execute netwok syncronizations messages,
                     //         and wait for them to finish
                     //
-                    foreach (var command in networkCommands) {
-                        command.Start();
-                    }
-                    Task.WaitAll(networkCommands.ToArray());
+
+                    //foreach (var command in networkCommands) {
+                    //    command.Start();
+                    //}
+                    //Task.WaitAll(networkCommands.ToArray());
 
                     timeUntilNextFrame -= delta;
                     t += delta;
@@ -202,6 +219,20 @@ namespace BombermanGame {
                 gEngine.Draw();
                 //communicationHandler.Broadcast(PacketBuilder.Build_Ready(myID));
                 //readySignal.WaitOne();
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private void CheckIfGameOver()
+        {
+            if (players.Count == 1) {
+                var winner = players.First();
+                //Console.WriteLine("Wingin player is: " + winner.Key);
+                MessageBox.Show("Wingin player is: " + winner.Key);
+                GameThread.Abort();
+
             }
         }
 
