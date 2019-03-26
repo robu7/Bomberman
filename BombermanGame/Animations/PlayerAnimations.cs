@@ -2,7 +2,13 @@
 using System.Collections.Generic;
 using System.Drawing;
 
+namespace BombermanGame
+{
+    enum SpriteSet { Blue, Red, Green }
+}
+
 namespace BombermanGame.Animations {
+
     class PlayerAnimations : IGraphicsResourceLoader {
         static private List<SharpDX.Direct2D1.Bitmap> up;
         static private List<SharpDX.Direct2D1.Bitmap> down;

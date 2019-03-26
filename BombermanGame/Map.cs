@@ -2,7 +2,6 @@
 using System.Drawing;
 using BombermanGame.GameObjects.Powerups;
 using BombermanGame.GameObjects;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace BombermanGame {
@@ -98,7 +97,7 @@ namespace BombermanGame {
             }
         }
 
-        public static Map CreateDefault() {
+        public static Map CreateDefault(int noPlayers) {
             var objects = new GameObject[11, 11];
             for (int x = 0; x < 11; x++) {
                 for (int y = 0; y < 11; y++) {

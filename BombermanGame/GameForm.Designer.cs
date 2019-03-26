@@ -70,8 +70,6 @@
             this.Name = "GameForm";
             this.Text = "Bomberman";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.GameForm_FormClosing);
-            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.GameForm_KeyDown);
-            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.GameForm_KeyUp);
             this.MainPanel.ResumeLayout(false);
             this.ResumeLayout(false);
 

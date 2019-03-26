@@ -3,17 +3,21 @@ using System.Drawing;
 using System.Timers;
 using BombermanGame.Animations;
 using BombermanGame.GameObjects.Powerups;
+using BombermanGame;
 
 namespace BombermanGame.GameObjects
 {
+    
+
     class Player : GameObject {
         private bool alive;
         private bool draw;
         private double lastUpdateTime;
         private Animation spriteAnimation;
         private FloatingLocationResolver movement;
+        private SpriteSet spriteSet;
 
-        public Player(Tile startTile) {
+        public Player(Tile startTile, SpriteSet spriteSet = SpriteSet.Blue) {
             draw = true;
             alive = true;
             BombCap = 1;
@@ -35,7 +39,12 @@ namespace BombermanGame.GameObjects
         public bool ShouldDraw() { return draw; }
         private void StopDrawing() { draw = false; }
 
-        public void startAnimating(Game.Direction direction, double currentTime) {
+        public PointF GetLocation() { return movement.Bounds.Location; }
+        public void SetLocation(PointF newLocation) {
+            movement.SetLocation(newLocation);
+        }
+
+        public void StartAnimating(Game.Direction direction, double currentTime) {
             this.spriteAnimation = PlayerAnimations.GetWalkAnimation(direction, 0.6);
             this.spriteAnimation.Start(currentTime);
         }
@@ -51,6 +60,9 @@ namespace BombermanGame.GameObjects
                     //this.alive = false;
                     this.PendingDestroy = true;
                     // Remove player
+                }
+                if (true) {
+
                 }
 
                 Tile.MarkAsDirty();
@@ -93,6 +105,48 @@ namespace BombermanGame.GameObjects
             target.DrawBitmap(sprite, new SharpDX.Mathematics.Interop.RawRectangleF(b.Left, b.Top, b.Right, b.Bottom), 1, SharpDX.Direct2D1.BitmapInterpolationMode.Linear);
         }
 
+        public void UpdateInput(Input newInput, double currentTime)
+        {
+            
+            // Update movement
+            bool restartAnimation = this.movement.Direction != newInput.MovementInput;
+            this.movement.Direction = newInput.MovementInput;
+
+            switch (this.movement.Direction)
+            {
+                case Game.Direction.North:
+                    this.movement.Velocity = new PointF(0, -250);
+                    break;
+                case Game.Direction.South:
+                    this.movement.Velocity = new PointF(0, 250);
+                    break;
+                case Game.Direction.West:
+                    this.movement.Velocity = new PointF(-250, 0);
+                    break;
+                case Game.Direction.East:
+                    this.movement.Velocity = new PointF(250, 0);
+                    break;
+                case Game.Direction.None:
+                    this.movement.Velocity = new PointF(0, 0);
+                    break;
+            }
+
+            // Update actions
+            if (newInput.DeployBomb && BombCap > 0) {
+                DeployBomb();
+            }
+
+            // Update animation
+            if (this.movement.Direction == Game.Direction.None)
+            {
+                StopAnimating();
+            }
+            else if(restartAnimation)
+            {
+                StartAnimating(this.movement.Direction, currentTime);
+            }
+        }
+
         public void NewMovementDirection(Game.Direction newDirection, double currentTime) {
             if (newDirection == this.movement.Direction) {
                 // No need to update when direction is the same
@@ -125,7 +179,7 @@ namespace BombermanGame.GameObjects
             if (newDirection == Game.Direction.None) {
                 StopAnimating();
             } else {
-                startAnimating(newDirection, currentTime);
+                StartAnimating(newDirection, currentTime);
             }
         }
 
@@ -144,6 +198,7 @@ namespace BombermanGame.GameObjects
             Bomb newBomb = new Bomb(this, this.lastUpdateTime);
             this.movement.CurrentTile.Object = newBomb;
         }
+
 
         protected override void OnDestroy(double currentTime) {
             this.alive = false;

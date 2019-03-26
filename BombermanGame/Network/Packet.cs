@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -82,10 +83,12 @@ namespace BombermanGame
         public int PeerID { get { return peerID; } }
         Game.Direction moveDirection;
         public Game.Direction MoveDirection { get { return moveDirection; } }
+        public PointF Location { get; set; }
 
-        public PlayerMovement(int player, Game.Direction moveDirection) {
+        public PlayerMovement(int player, Game.Direction moveDirection, PointF location) {
             this.peerID = player;
             this.moveDirection = moveDirection;
+            this.Location = location;
         }
     }
 
@@ -153,11 +156,13 @@ namespace BombermanGame
         /// Player movement replication,
         /// contains sender peer ID and movement directon
         /// </summary>
-        static public byte[] Build_PlayerMovement(int myID, Game.Direction direction) {
+        static public byte[] Build_PlayerMovement(int myID, Game.Direction direction, PointF location) {
             List<byte> data = new List<byte>();
             data.AddRange(BitConverter.GetBytes((int)MessageType.PlayerMovement));
             data.AddRange(BitConverter.GetBytes(myID));
             data.AddRange(BitConverter.GetBytes((int)direction));
+            data.AddRange(BitConverter.GetBytes(location.X));
+            data.AddRange(BitConverter.GetBytes(location.Y));
             return data.ToArray();
         }
 
@@ -219,7 +224,9 @@ namespace BombermanGame
         static public PlayerMovement Decode_PlayerMovement(byte[] data) {
             int peerID = BitConverter.ToInt32(data, 4);
             Game.Direction dir = (Game.Direction)BitConverter.ToInt32(data, 8);
-            return new PlayerMovement(peerID, dir);
+            int x = BitConverter.ToInt32(data, 12);
+            int y = BitConverter.ToInt32(data, 16);
+            return new PlayerMovement(peerID, dir, new PointF(x,y));
         }
         
         static public int Decode_Ready(byte[] data) {

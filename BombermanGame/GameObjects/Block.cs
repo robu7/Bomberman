@@ -12,11 +12,12 @@ namespace BombermanGame {
         private int? TimeToLive = null;
 
         public override void Draw(RenderTarget target) {
-            var b = Tile.Bounds;
+            var bounds = Tile.Bounds;
+
             if (spriteAnimation?.State == AnimationState.InProgress) {
-                target.DrawBitmap(spriteAnimation.CurrentFrame, new SharpDX.Mathematics.Interop.RawRectangleF(b.Left, b.Top, b.Right, b.Bottom), 1, SharpDX.Direct2D1.BitmapInterpolationMode.Linear);
+                target.DrawBitmap(spriteAnimation.CurrentFrame, new SharpDX.Mathematics.Interop.RawRectangleF(bounds.Left, bounds.Top, bounds.Right, bounds.Bottom), 1, SharpDX.Direct2D1.BitmapInterpolationMode.Linear);
             } else {
-                target.DrawBitmap(loader.Bitmap, new SharpDX.Mathematics.Interop.RawRectangleF(b.Left, b.Top, b.Right, b.Bottom), 1, SharpDX.Direct2D1.BitmapInterpolationMode.Linear);
+                target.DrawBitmap(loader.Bitmap, new SharpDX.Mathematics.Interop.RawRectangleF(bounds.Left, bounds.Top, bounds.Right, bounds.Bottom), 1, SharpDX.Direct2D1.BitmapInterpolationMode.Linear);
             }
         }
 
@@ -40,6 +41,7 @@ namespace BombermanGame {
             //Tile.Object = HiddenItem;
             //HiddenItem?.SpawnedFromBlock(currentTime);
             spriteAnimation = BlockAnimation.GetDestroyAnimation();
+            //spriteAnimation = BlockAnimation.GetExplosionAnimation();
             spriteAnimation.Start(currentTime);
             TimeToLive = 4;
 

@@ -2,22 +2,37 @@
 using System.Windows.Input;
 using System.Windows.Forms;
 
+using Direction = BombermanGame.Game.Direction;
+
 namespace BombermanGame
 {
+    struct Input
+    {
+        public Input(Direction movement, bool deployBomb)
+        {
+            MovementInput = movement;
+            DeployBomb = deployBomb;
+        }
+        public Direction MovementInput { get; }
+        public bool DeployBomb { get; }
+    }
+
+
     class InputHandler
     {
         private Keys currentKey;
 
-        private Game.Direction pressedDirection;
-        public Game.Direction PressedDirection { get { return pressedDirection; } set { pressedDirection = value; } }
+        private Direction pressedDirection;
+        public Direction PressedDirection { get { return pressedDirection; } set { pressedDirection = value; } }
 
         private bool deployBomb;
-        public bool DeployBomb { get{ return deployBomb; } set { deployBomb = value; } }
+        public bool DeployBomb { get { return deployBomb; } set { deployBomb = value; } }
 
         private bool updatedInput;
         public bool UpdatedInput { get { return updatedInput; } set { updatedInput = value; } }
 
         public InputHandler() {
+            //currentInput = new Input{ movementInput = Game.Direction.None, deployBomb = false };
             //Keyboard.AddKeyDownHandler(gameGraphics, OnKeyDownHandler);
             //Keyboard.KeyDownEvent += buttonPressed;
         }
@@ -26,8 +41,32 @@ namespace BombermanGame
         /// This function will check for new inpout and return true is this is the case,
         /// otherwise return false.
         /// </summary>
-        public bool handleInput() {
-            return false;
+        public Input CheckInput() {
+            deployBomb = false;
+
+            // Check movement input
+            if (Keyboard.IsKeyDown(Key.W)) {
+                pressedDirection = Direction.North;
+            }
+            else if (Keyboard.IsKeyDown(Key.S)) {
+                pressedDirection = Direction.South;
+            }
+            else if (Keyboard.IsKeyDown(Key.A)) {
+                pressedDirection = Direction.West;
+            }
+            else if (Keyboard.IsKeyDown(Key.D)) {
+                pressedDirection = Direction.East;
+            }
+            else {
+                pressedDirection = Direction.None;
+            }
+
+            // Check action input
+            if (Keyboard.IsKeyDown(Key.B)) {
+                deployBomb = true;
+            }
+
+            return new Input(pressedDirection, deployBomb);
         }
 
 
@@ -65,6 +104,9 @@ namespace BombermanGame
                         break;
                     case Keys.B:
                         deployBomb = true;
+                        break;
+                    default:
+                        pressedDirection = Game.Direction.None;
                         break;
                 }
             }

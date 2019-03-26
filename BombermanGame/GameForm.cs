@@ -80,23 +80,9 @@ namespace BombermanGame
             hostGameMenu.AddLobbyPlayer(playerID, name);
         }
 
-
-        // TODO: implement InputHandler instead
-        // Controller input is passed on to the game class
-        //
-        private void GameForm_KeyDown(object sender, KeyEventArgs e) {
-            //inputHandler.buttonPressed(e.KeyCode);
-            game.handleKeyDownInput(e);
-        }
-
-        private void GameForm_KeyUp(object sender, KeyEventArgs e) {
-            //inputHandler.buttonReleased(e.KeyCode);
-            game.handleKeyUpInput(e);
-        }
-
         private void GameForm_FormClosing(object sender, FormClosingEventArgs e) {
             if(game != null)
-                game.stopGame();
+                game.StopGame();
         }
 
     }

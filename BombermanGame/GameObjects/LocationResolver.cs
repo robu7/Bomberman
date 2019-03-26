@@ -28,6 +28,11 @@ namespace BombermanGame.GameObjects
         protected RectangleF bounds;
         public RectangleF Bounds => bounds;
 
+        public void SetLocation(PointF newLocation) {
+            bounds.Location = newLocation;
+
+
+        }
         public abstract LocationResolvStatus UpdateLocation(double currentTime, double delta);
     }
 
@@ -79,7 +84,7 @@ namespace BombermanGame.GameObjects
             var nextTile = CurrentTile.GetNextTileInDirection(Direction);
 
             var newBounds = new RectangleF(new PointF(Bounds.Left + xDelta, Bounds.Top + yDelta), Bounds.Size);
-
+            Console.WriteLine(newBounds);
 
             foreach (var item in FloatingObjectRegistry.GetMovingObjects()) {
                 if (item.Tile != CurrentTile && item.Tile.Bounds.IntersectsWith(newBounds)) {
@@ -144,7 +149,6 @@ namespace BombermanGame.GameObjects
                 status.ChangedTile = true;
                 status.PrevTile = CurrentTile;
                 CurrentTile = nextTile;
-
             }
 
             if (!Velocity.IsEmpty) {

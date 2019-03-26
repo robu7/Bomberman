@@ -39,7 +39,7 @@ namespace BombermanGame {
         public List<Bomb> bombList;
 
         //
-        // Time variables to ensure even game flow
+        // Time variables
         //
         private double newTime;
         private double timeUntilNextFrame;
@@ -58,7 +58,8 @@ namespace BombermanGame {
             Console.WriteLine("Recieved message: {0}", typeof(T).Name);
             switch (typeof(T).Name) {
                 case "PlayerMovement":
-                    startPlayerMovement(command as PlayerMovement);
+                    //startPlayerMovement(command as PlayerMovement);
+                    Console.WriteLine("handle movement command not implemented atm");
                     //networkCommands.Add(new Task(new Action (startPlayerMovement(command as PlayerMovement)));
                     break;
                 case "DeployBomb":
@@ -78,17 +79,21 @@ namespace BombermanGame {
         /// <summary>
         /// Constructor
         /// </summary>
-        public Game(Control gamePanel/*Graphics panelGraphics*/, InputHandler inputHandler, Communicator communicationHandler) {
+        public Game(
+            Control gamePanel/*Graphics panelGraphics*/, 
+            InputHandler inputHandler, 
+            Communicator communicationHandler)
+        {
+
             this.communicationHandler = communicationHandler;
             this.inputHandler = inputHandler;
-
             this.communicationHandler.ActiveControl = this;
 
-            map = Map.CreateDefault();
+            map = Map.CreateDefault(0);
             if (communicationHandler.IsHost) {
                 var tmp = Map.GenerateMapPowerups(map);
                 Console.WriteLine(tmp.Count());
-                // BroadCast
+                // BroadCast powerup locations
             }
 
             players = new Dictionary<int, Player>();
@@ -115,12 +120,11 @@ namespace BombermanGame {
             timer = new Stopwatch();
 
             GameThread = new Thread(new ThreadStart(GameLoop));
-
+            GameThread.SetApartmentState(ApartmentState.STA);
             //SoundPlayer themeMusic = new SoundPlayer(@"C:\Users\Robin\Pictures\theme.wav");
             // Ska flyttas
             //SoundPlayer themeMusic = new SoundPlayer(Properties.Resources.theme1);
             //themeMusic.Play();
-
 
             GameThread.Start();
         }
@@ -136,7 +140,9 @@ namespace BombermanGame {
 
             timer.Start();
             currentTime = ((double)timer.ElapsedMilliseconds) / 1000;
-            
+
+            //myPlayerInstance.SetLocation(new PointF(500, 500));
+
             while (true) {
 
                 //
@@ -150,25 +156,25 @@ namespace BombermanGame {
                 // Step 2: Check keyboard input and replicate to other players
                 //
                 if (myPlayerInstance.isAlive()) {
-                    if (inputHandler.UpdatedInput) {
-                        myPlayerInstance.NewMovementDirection(inputHandler.PressedDirection, currentTime);
-                        //communicationHandler.Broadcast(PacketBuilder.Build_PlayerMovement(myID, inputHandler.PressedDirection));
-                        inputHandler.UpdatedInput = false;
-                    }
-                    if (inputHandler.DeployBomb) {
-                        if (myPlayerInstance.BombCap > 0)
-                            myPlayerInstance.DeployBomb();
-                        //inputHandler.DeployBomb = false;
-                        communicationHandler.Broadcast(PacketBuilder.Build_DeployBomb(myID));
-                    }
-                    communicationHandler.Broadcast(PacketBuilder.Build_PlayerMovement(myID, inputHandler.PressedDirection));
+                    Input newInput = inputHandler.CheckInput();
+                    myPlayerInstance.UpdateInput(newInput, currentTime);
+                    
+                    //if (inputHandler.UpdatedInput) {
+                    //    myPlayerInstance.NewMovementDirection(inputHandler.PressedDirection, currentTime);
+                    //    //communicationHandler.Broadcast(PacketBuilder.Build_PlayerMovement(myID, inputHandler.PressedDirection));
+                    //    inputHandler.UpdatedInput = false;
+                    //}
+                    //if (inputHandler.DeployBomb) {
+                    //    if (myPlayerInstance.BombCap > 0)
+                    //        myPlayerInstance.DeployBomb();
+                    //    //inputHandler.DeployBomb = false;
+                    //    communicationHandler.Broadcast(PacketBuilder.Build_DeployBomb(myID));
+                    //}
+                    //communicationHandler.Broadcast(PacketBuilder.Build_PlayerMovement(myID, inputHandler.PressedDirection, myPlayerInstance.GetLocation()));
                 }
-                communicationHandler.Broadcast(PacketBuilder.Build_Ready(myID));
+                //communicationHandler.Broadcast(PacketBuilder.Build_Ready(myID));
 
-                //
-                //
-                //
-                readySignal.WaitOne();
+                //readySignal.WaitOne();
 
                 while (timeUntilNextFrame > 0.0) {
                     delta = Math.Min(timeUntilNextFrame, dt);
@@ -230,32 +236,13 @@ namespace BombermanGame {
             if (players.Count == 1) {
                 var winner = players.First();
                 //Console.WriteLine("Wingin player is: " + winner.Key);
-                MessageBox.Show("Wingin player is: " + winner.Key);
+                MessageBox.Show("Winning player is: " + winner.Key);
                 GameThread.Abort();
 
             }
         }
 
-        /// <summary>
-        /// Functions to handle input from user
-        /// </summary>
-        public void handleKeyDownInput(KeyEventArgs keyBoardInput) {
-            inputHandler.buttonPressed(keyBoardInput.KeyCode);          
-        }
-        public void handleKeyUpInput(KeyEventArgs keyBoardInput) {
-            inputHandler.buttonReleased(keyBoardInput.KeyCode);
-        }
-
-        private void updatePlayerMovement(Player player, Direction moveDirection) {
-            Console.WriteLine("Player: {0} started moving: {1}", players.First(x => x.Value == player).Key, moveDirection.ToString());
-            player.NewMovementDirection(moveDirection, this.currentTime);
-        }
-
-        private void startPlayerMovement(PlayerMovement newMove) {
-            updatePlayerMovement(players[newMove.PeerID], newMove.MoveDirection);
-        }
-
-        public void stopGame() {
+        public void StopGame() {
             this.GameThread.Abort();
         }
     }
